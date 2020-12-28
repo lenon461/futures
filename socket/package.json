@@ -1,0 +1,24 @@
+{
+  "name": "socket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec ts-node src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "redis": "^3.0.2",
+    "socket.io": "^3.0.4"
+  },
+  "devDependencies": {
+    "@types/bull": "^3.14.4",
+    "@types/socket.io": "^2.1.12",
+    "nodemon": "^2.0.6",
+    "socket.io-client": "^3.0.4"
+  }
+}
