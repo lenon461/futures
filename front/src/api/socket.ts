@@ -21,7 +21,11 @@ class Socket {
     const start = Date.now();
     this.socket.emit("ping", () => {
       console.log(`pong (latency: ${Date.now() - start} ms)`);
-  });
+    });
+  }
+  
+  emit(event, payload) {
+    this.socket.emit(event, payload)
   }
 }
 

@@ -2,7 +2,7 @@
   <div class="hello">
     <b-list-group  >
       <b-list-group-item button>
-        <div class="tickers" v-for='ticker in tickers' :key = ticker>
+        <div class="tickers" v-for="(ticker, index) in tickers" :key ="ticker + index" @click="join(ticker.name)">
           {{ticker.name}}
           {{ticker.point}}
         </div>
@@ -32,6 +32,9 @@ export default class Ticker extends Vue {
   }
   mounted() {
     // console.log("")
+  }
+  join(name) {
+    socket.emit("subscribe", name)
   }
 }
 </script>

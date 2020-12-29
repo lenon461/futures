@@ -1,38 +1,37 @@
 import redis from 'redis';
-
 const subscriber = redis.createClient()
 
-const tickers = [
-    {
-        name:'A',
-        point:30,
-    },
-    {
-        name:'B',
-        point:30,
-    },
-    {
-        name:'C',
-        point:30,
-    },
-    {
-        name:'D',
-        point:30,
-    },
-    {
-        name:'E',
-        point:30,
-    },
-]
+const tickers:Array<any> = [];
 
-const Subscribe = () => {
+const Subscribe = (io) => {
+
+    io.emit('ticker', JSON.stringify(tickers))
+    setInterval(() => {
+        io.emit('ticker', JSON.stringify(tickers))
+    }, 1000);
+
     subscriber.on("message", function(channel, message) {
-        const newTick = JSON.parse(message);
-        tickers.find(ele => ele.name === newTick.name)!.point = newTick.point
+        const {event, name} = {event : channel.split('@')[0], name: channel.split('@')[1]}
+        if(event === 'ticker') {
+            const newTick = JSON.parse(message);
+            const oldTick = tickers.find(ele => ele.name === newTick.name);
+            if(oldTick) {
+                oldTick.point = newTick.point
+            } else {
+                tickers.push(newTick)
+            }
+        }
+        if(event === 'depth') {
+            // io.emit("depth", message)  
+            const name = JSON.parse(message).name
+            console.log(name, message)
+            io.to(name).emit(message)
+        }
     });
 }
 
-subscriber.subscribe('ticker@update')   
+subscriber.subscribe('ticker@tick')   
+subscriber.subscribe('depth@dep')   
 export default Subscribe
 export { tickers };
 

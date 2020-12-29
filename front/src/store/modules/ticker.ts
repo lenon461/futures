@@ -28,7 +28,7 @@ const state = {
 
 const getters = {
     getTicker(state) {
-        console.log(_.get(state, ["tickers"]))
+        // console.log(_.get(state, ["tickers"]))
         return _.get(state, ["tickers"])
     }
 }
