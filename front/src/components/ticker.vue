@@ -2,9 +2,9 @@
   <div class="hello">
     <b-list-group  >
       <b-list-group-item button>
-        <div class="tickers" v-for="(ticker, index) in tickers" :key ="ticker + index" @click="join(ticker.name)">
-          {{ticker.name}}
-          {{ticker.point}}
+        <div class="ticker" v-for="(item, index) in items" :key ="item + index" @click="join(item.name)">
+          {{item.name}}
+          {{item.point}}
         </div>
         <div class="name"> NAME </div>
         <div class="point"> POINT </div>
@@ -24,7 +24,7 @@ export default class Ticker extends Vue {
   
   @Getter('getTicker') getTicker: any;
   
-  get tickers() {
+  get items() {
     return this.getTicker
   }
   created() {

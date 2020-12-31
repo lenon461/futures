@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 const state = {
-    tickers: [
+    ticker: [
         {
             name:'A',
             point:30,
@@ -29,14 +29,14 @@ const state = {
 const getters = {
     getTicker(state) {
         // console.log(_.get(state, ["tickers"]))
-        return _.get(state, ["tickers"])
+        return _.get(state, ["ticker"])
     }
 }
 
 const mutations = {
     updateTicker(state, _tick) {
         const tick = JSON.parse(_tick)
-        state.tickers = tick
+        state.ticker = tick
     }
 }
 
