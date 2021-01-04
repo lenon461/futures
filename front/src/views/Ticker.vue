@@ -1,5 +1,5 @@
 <template>
-  <div class="tickers">
+  <div>
     <b-tabs content-class="mt-3" fill>
       <b-tab title="즐겨찾기" active>
         <Ticker></Ticker>

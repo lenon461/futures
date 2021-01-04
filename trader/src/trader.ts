@@ -19,13 +19,17 @@ class Trader {
 
     publish() {
         setInterval(() => {
-            publisher.publish(`ticker@tick`, JSON.stringify({
+            // 체결시 마다 실행될 훅
+            publisher.publish(`#ticker`, JSON.stringify({
                 name: `${this.MKNAME}`,
                 point: parseFloat((Math.random() * 10000 / 100).toFixed(2)),
             }))
-        }, 500);
+        }, 1000);
+
         setInterval(() => {
-            publisher.publish(`depth@dep`, JSON.stringify(this.getOrderBooks()))
+            // 1s 마다 전체 호가 Pub
+            // TODO 업데이트된 값만 Pub 하도록 수정
+            publisher.publish(`#depth`, JSON.stringify(this.getOrderBooks()))
         }, 1000);
     }
 

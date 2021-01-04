@@ -15,6 +15,12 @@ const routes: Array<RouteConfig> = [
     name: "Ticker",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Ticker.vue")
+  },
+  {
+    path: "/trade",
+    name: "Trade",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Trade.vue")
   }
 ];
 
