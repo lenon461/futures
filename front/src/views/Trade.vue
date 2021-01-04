@@ -1,24 +1,37 @@
 <template>
-  <div>
-    <Alter/>
+  <div class="trade">
+    <SymbolSwitcher/>
+    <OrderBox/>
+    <OrderBook :OrderBook="OrderBook"/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Api from "../api";
-import Alter from "@/components/alter.vue";
+import SymbolSwitcher from "@/components/symbol-switcher.vue";
+import OrderBox from "@/components/order-box.vue";
+import OrderBook from "@/components/order-book.vue";
 import socket from "../api/socket";
 
 @Component({
   components: {
-    Alter
+    SymbolSwitcher,
+    OrderBox
+    ,OrderBook
   }
 })
-export default class Home extends Vue {
+export default class Trade extends Vue {
+  public OrderBook = {}
+
+  setOrderBook(data){ 
+    this.OrderBook = JSON.parse(JSON.parse(data));
+  }
   created() {
     socket.emit('subscribe', 'depth@PAKA')
+    socket.on('depth', this.setOrderBook)
   }
+
   private fav;
 }
 </script>
