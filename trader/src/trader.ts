@@ -105,10 +105,10 @@ class Trader {
         return {
             name: this.MKNAME,
             S: this.getSellOrderBook().map(orders => orders.map(order => {
-                return {price : order.price, amount: order.amount}
+                return { price: order.price, amount: order.amount }
             })),
             B: this.getBuyOrderBook().map(orders => orders.map(order => {
-                return {price : order.price, amount: order.amount}
+                return { price: order.price, amount: order.amount }
             })),
         }
     }
@@ -117,10 +117,10 @@ class Trader {
     showOrderBooks() {
         const showOrderBook = (ob: IOrder[][]) => {
             return ob.map(orders => {
-                if(orders.length !== 0){
+                if (orders.length !== 0) {
                     const t_amount = orders.map(order => Number(order.amount)).reduce((p, c) => p + c, 0)
                     const price = orders[0].price;
-                    return {t_amount, price}
+                    return { t_amount, price }
                 }
             })
         }
@@ -137,15 +137,15 @@ class Trader {
 
     // public logic
     public addOrder(order: IOrder) {
-        
+
         // const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
         // const takerOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
-        
-        
+
+
         this.doTrade(order)
 
     }
-    
+
 
 
     // private logic
@@ -153,21 +153,21 @@ class Trader {
         const mergeOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
         const thisOrder = order;
         const flattened = targetOrderBook => [].concat(...targetOrderBook)
-        if(flattened(mergeOrderBook).length === 0) {
+        if (flattened(mergeOrderBook).length === 0) {
             mergeOrderBook.push([order])
-            return ;
+            return;
         }
         for (let center = mergeOrderBook.length - 1; center >= 0; center--) {
             const mergeOrders = mergeOrderBook[center]
-            if(mergeOrders.length === 0) {
+            if (mergeOrders.length === 0) {
                 mergeOrderBook.splice(center, 1)
                 continue;
             };
             const mergeOrder = mergeOrders[0];
 
-            
+
             if (mergeOrder.price === thisOrder.price) {
-                
+
                 mergeOrders.unshift(thisOrder)
                 return;
             }
@@ -177,7 +177,7 @@ class Trader {
                     return;
                 }
                 else if (mergeOrder.price < thisOrder.price) {
-                    if(center === 0) mergeOrderBook.unshift([thisOrder])
+                    if (center === 0) mergeOrderBook.unshift([thisOrder])
                     continue;
                 }
             }
@@ -187,7 +187,7 @@ class Trader {
                     return;
                 }
                 else if (mergeOrder.price > thisOrder.price) {
-                    if(center === 0) mergeOrderBook.unshift([thisOrder])
+                    if (center === 0) mergeOrderBook.unshift([thisOrder])
                     continue;
                 }
             }
@@ -200,8 +200,8 @@ class Trader {
     private doTrade(order: IOrder) {
         const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
         const flattened = targetOrderBook => [].concat(...targetOrderBook)
-        if(flattened(makerOrderBook).length === 0) {
-            this.logger.debug( "오더북 비어있음 => 추가")
+        if (flattened(makerOrderBook).length === 0) {
+            this.logger.debug("오더북 비어있음 => 추가")
             this._addOrder(order)
             return;
         }
@@ -209,35 +209,35 @@ class Trader {
         for (let center = makerOrderBook.length - 1; center >= 0; center--) {
             const makerOrders = makerOrderBook[center]
 
-            if(makerOrders.length === 0) {
+            if (makerOrders.length === 0) {
                 makerOrderBook.splice(center, 1)
                 continue;
             };
             for (let index = makerOrders.length - 1; index >= 0; index--) {
-            
+
                 const makerOrder = makerOrders[index];
-                
+
                 let buyer = order.type === "S" ? makerOrder : order
                 let seller = order.type === "S" ? order : makerOrder
                 if (buyer.price >= seller.price) {
-                    this.logger.debug( "가격 충족 => 체결")
+                    this.logger.debug("가격 충족 => 체결")
                     if (buyer.amount < seller.amount) {
-                        this.logger.debug( "buyer 수량 전체 충족 seller 수량 일부 충족")
+                        this.logger.debug("buyer 수량 전체 충족 seller 수량 일부 충족")
 
                         makerOrder.type === "B" ? makerOrders.splice(index, 1) : null
                         buyer.status = "CM"
                         this.filledOrder(buyer)
-                        
+
                         seller.amount -= buyer.amount;
                         this.filledOrder(seller)
-        
-                        return ;
-        
+
+                        return;
+
                     }
                     else if (buyer.amount === seller.amount) {
-                        this.logger.debug( "buyer 수량 전체 충족 seller 수량 전체 충족")
+                        this.logger.debug("buyer 수량 전체 충족 seller 수량 전체 충족")
 
-                        makerOrders.splice(index, 1) 
+                        makerOrders.splice(index, 1)
 
                         buyer.status = "CM"
                         seller.status = "CM"
@@ -245,30 +245,30 @@ class Trader {
                         this.filledOrder(buyer)
                         this.filledOrder(seller)
 
-                        return ;
+                        return;
                     }
                     else if (buyer.amount > seller.amount) {
-                        this.logger.debug( "buyer 수량 일부 충족 seller 수량 전체 충족")
+                        this.logger.debug("buyer 수량 일부 충족 seller 수량 전체 충족")
 
                         makerOrder.type === "S" ? makerOrders.splice(index, 1) : null
                         seller.status = "CM"
                         this.filledOrder(seller)
-        
+
                         buyer.amount -= seller.amount
                         this.filledOrder(buyer)
 
                         this.doTrade(buyer)
-        
-                        return ;
+
+                        return;
                     }
                     else {
                         throw new Error("가격 조건 오류")
                     }
                 }
                 else if (buyer.price < seller.price) {
-                    this.logger.debug( "가격 미충족 => 미체결")
+                    this.logger.debug("가격 미충족 => 미체결")
                     this._addOrder(order)
-                    return ;
+                    return;
                 }
 
             }
@@ -276,16 +276,16 @@ class Trader {
 
     }
 
-    filledOrder(order){
+    filledOrder(order) {
         // this.ordersQueue.add('orderComplete', order)
     }
 
     private cancelOrder() {
-        
+
     }
 }
 
-export interface IOrder  {
+export interface IOrder {
     readonly id: String;
     readonly memberId: String;
     readonly marketId: String;

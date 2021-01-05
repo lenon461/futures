@@ -1,8 +1,6 @@
 <template>
-  <div class="alter">
-    <div class="symbol">ETHUSDT</div>
-    <div class="orderui">
-      <b-card no-body>
+  <div class="order-box">
+    <b-card no-body>
         <b-tabs pills card>
           <b-tab title="Tab 1" active><b-card-text>Tab contents 1</b-card-text></b-tab>
           <b-tab title="Tab 2"><b-card-text>Tab contents 2</b-card-text></b-tab>
@@ -44,22 +42,6 @@
       <b-input-group size="lg" prepend="$" append=".00">
         <b-form-input></b-form-input>
       </b-input-group>
-      <b-list-group>
-        <div class="ORDER" v-for="(item, index) in [1,2,3,4]" :key ="item + index" >
-          <b-list-group-item button>
-            {{item}}
-          </b-list-group-item>
-        </div>
-      </b-list-group>
-      <div class="CURRENT">CURRENT</div>
-      <b-list-group>
-        <div class="ORDER" v-for="(item, index) in [1,2,3,4]" :key ="item + index" >
-          <b-list-group-item button>
-            {{item}}
-          </b-list-group-item>
-        </div>
-      </b-list-group>
-    </div>
   </div>
 </template>
 
@@ -68,7 +50,7 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 import {State, Action, Getter} from 'vuex-class';
 
 @Component
-export default class Alter extends Vue {
+export default class OrderBox extends Vue {
   
   @Getter('getTicker') getTicker: any;
   
@@ -81,8 +63,10 @@ export default class Alter extends Vue {
   mounted() {
     // console.log("")
   }
-  join(name) {
-    // socket.emit("subscribe", name)
-  }
 }
 </script>
+<style scoped>
+.order-box {
+ border: 5px solid green;
+}
+</style>
