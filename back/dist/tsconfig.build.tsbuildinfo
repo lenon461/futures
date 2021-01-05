@@ -1452,7 +1452,7 @@
         "affectsGlobalScope": false
       },
       "../src/middlewares/logger.ts": {
-        "version": "fb0f2e231e2e9b91ad0501aa06659b4dbe09893aec5b01cef12500a683d61fb2",
+        "version": "6d332e931523760f097bdaa4555733b92db530c44e27b3734dfde05ab4280e8f",
         "signature": "ba78baa0431a52fa3a72793937d28ea05bc0d76eb6d6b075236e75cce570af9e",
         "affectsGlobalScope": false
       },
@@ -1902,17 +1902,17 @@
         "affectsGlobalScope": false
       },
       "../src/stub/lpchart.ts": {
-        "version": "2d55a1273e3fa188a12cdfbd6c1c6b32042e83fa6bb65749f9004ba9a25246b3",
+        "version": "0f2a0a4c98d0c8993ac3edcd62524d8cc4c40da993f323ffca44d80609fa3173",
         "signature": "375f327647e076cb119c41f015ae6fb5e01022cf32cce59c3af55830fb5468ea",
         "affectsGlobalScope": false
       },
       "../src/stub/index.ts": {
-        "version": "2c96a05f1ffb698951a0a1ca090fa162064e0ff5494322d02409f4689e9d7291",
+        "version": "f8dce04ca2840a9a6a1b957eb86aa572294aff82ca1a1f7fcdcf2cde9c826b8a",
         "signature": "ab74ef81c7bacc562fabe4945a1a85af0f4c3c0d52225c62ac7850daa7f125f8",
         "affectsGlobalScope": false
       },
       "../src/util/logger.ts": {
-        "version": "08846e1175a186d2c0bdc927992e0c2475b71a923d8c975d9a8697e1b705db70",
+        "version": "2f7c06f7368e77aadc89641ea73f4dbf26ceb7cb064660e075ec33d7fe8356f8",
         "signature": "70c5e54843c0d67ac109b3af0f9e2ee4d7b601d5d88c69562b601f13562c59fe",
         "affectsGlobalScope": false
       },

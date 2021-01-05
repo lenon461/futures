@@ -2,7 +2,7 @@
   <div>
     <b-tabs content-class="mt-3" fill>
       <b-tab title="즐겨찾기" active>
-        <Ticker></Ticker>
+        <Ticker :summoners="summoners"></Ticker>
       </b-tab>
       <b-tab title="인기">
         <Ticker></Ticker>
@@ -28,7 +28,17 @@ import socket from "../api/socket";
     Ticker
   }
 })
-export default class Home extends Vue {
-  private fav;
+export default class Market extends Vue {
+  summoners:any = []
+  error:any = []
+  // async summoners() {
+  //    return await Api.Summoners.getSummoners()
+  // }
+  async created() {
+    // console.log("")
+     this.summoners = await Api.Summoners.getSummoners()
+     this.summoners = await Api.Summoners.getError()
+  }
+  
 }
 </script>

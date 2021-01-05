@@ -11,10 +11,10 @@ const routes: Array<RouteConfig> = [
     component: Home
   },
   {
-    path: "/ticker",
-    name: "Ticker",
+    path: "/market",
+    name: "Market",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Ticker.vue")
+      import(/* webpackChunkName: "about" */ "../views/Market.vue")
   },
   {
     path: "/trade",

@@ -1,6 +1,14 @@
 import axios from "./axios";
 // import Chart from "./chart"
 export default {
+  Summoners: {
+    getSummoners() {
+      return axios.get("/summoners");
+    },
+    getError() {
+      return axios.get("/error");
+    }
+  },
   Chart: {
     getCandles(params: any) {
       return axios.get("/chart", {

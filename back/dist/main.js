@@ -7,7 +7,7 @@
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(1);
-const app_module_1 = __webpack_require__(3);
+const app_module_1 = __webpack_require__(2);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
@@ -34,8 +34,49 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AppModule = void 0;
+const common_1 = __webpack_require__(3);
+const logger_1 = __webpack_require__(4);
+const orders_module_1 = __webpack_require__(5);
+const summoners_module_1 = __webpack_require__(17);
+let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(logger_1.LoggerMiddleware)
+            .forRoutes('*');
+    }
+};
+AppModule = __decorate([
+    common_1.Module({
+        imports: [
+            orders_module_1.OrdersModule,
+            summoners_module_1.SummonersModule,
+        ],
+    })
+], AppModule);
+exports.AppModule = AppModule;
+
+
+/***/ }),
+/* 3 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/common");;
+
+/***/ }),
+/* 4 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LoggerMiddleware = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 let LoggerMiddleware = class LoggerMiddleware {
     constructor() {
         this.logger = new common_1.Logger('HTTP');
@@ -58,54 +99,7 @@ exports.LoggerMiddleware = LoggerMiddleware;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AppModule = void 0;
-const common_1 = __webpack_require__(5);
-const logger_1 = __webpack_require__(2);
-const orders_module_1 = __webpack_require__(6);
-const summoners_module_1 = __webpack_require__(17);
-let AppModule = class AppModule {
-    configure(consumer) {
-        consumer
-            .apply(logger_1.LoggerMiddleware)
-            .forRoutes('*');
-    }
-};
-AppModule = __decorate([
-    common_1.Module({
-        imports: [
-            orders_module_1.OrdersModule,
-            summoners_module_1.SummonersModule,
-        ],
-    })
-], AppModule);
-exports.AppModule = AppModule;
-
-
-/***/ }),
-/* 4 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/bull");;
-
-/***/ }),
 /* 5 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/common");;
-
-/***/ }),
-/* 6 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -117,8 +111,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersModule = void 0;
-const bull_1 = __webpack_require__(4);
-const common_1 = __webpack_require__(5);
+const bull_1 = __webpack_require__(6);
+const common_1 = __webpack_require__(3);
 const database_module_1 = __webpack_require__(7);
 const orders_controller_1 = __webpack_require__(10);
 const orders_provider_1 = __webpack_require__(15);
@@ -141,6 +135,12 @@ exports.OrdersModule = OrdersModule;
 
 
 /***/ }),
+/* 6 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/bull");;
+
+/***/ }),
 /* 7 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -153,7 +153,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DatabaseModule = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const database_providers_1 = __webpack_require__(8);
 let DatabaseModule = class DatabaseModule {
 };
@@ -208,11 +208,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var OrdersController_1, _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersController = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const orders_service_1 = __webpack_require__(11);
 const create_order_dto_1 = __webpack_require__(12);
 const update_order_dto_1 = __webpack_require__(13);
-const common_2 = __webpack_require__(5);
+const common_2 = __webpack_require__(3);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
@@ -299,7 +299,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var OrdersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersService = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const mongoose_1 = __webpack_require__(9);
 let OrdersService = OrdersService_1 = class OrdersService {
     constructor(orderModel) {
@@ -418,7 +418,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersModule = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const summoners_controller_1 = __webpack_require__(18);
 const summoners_provider_1 = __webpack_require__(21);
 const summoners_service_1 = __webpack_require__(20);
@@ -455,7 +455,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SummonersController_1, _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersController = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const create_summoner_dto_1 = __webpack_require__(19);
 const summoners_service_1 = __webpack_require__(20);
 let SummonersController = SummonersController_1 = class SummonersController {
@@ -536,7 +536,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SummonersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersService = void 0;
-const common_1 = __webpack_require__(5);
+const common_1 = __webpack_require__(3);
 const mongoose_1 = __webpack_require__(9);
 let SummonersService = SummonersService_1 = class SummonersService {
     constructor(summonerModel) {

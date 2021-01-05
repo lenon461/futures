@@ -24,7 +24,7 @@ class Socket {
     });
 
     this.socket.emit("subscribe", 'ticker', () => {
-      console.log(`pong (latency: ${Date.now() - start} ms)`);
+      // console.log(`pong (latency: ${Date.now() - start} ms)`);
     });
   }
 

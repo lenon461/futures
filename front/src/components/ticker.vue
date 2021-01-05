@@ -2,9 +2,8 @@
   <div class="hello">
     <b-list-group  >
       <b-list-group-item button>
-        <div class="ticker" v-for="(item, index) in items" :key ="item + index" @click="join(item.name)">
-          {{item.name}}
-          {{item.point}}
+        <div class="ticker" v-for="(summoner, index) in summoners" :key ="summoner + index" @click="join(item.name)">
+          summoner
         </div>
         <div class="name"> NAME </div>
         <div class="point"> POINT </div>
@@ -22,11 +21,8 @@ import socket from "../api/socket";
 @Component
 export default class Ticker extends Vue {
   
-  @Getter('getTicker') getTicker: any;
+  @Prop() readonly summoners!: any
   
-  get items() {
-    return this.getTicker
-  }
   created() {
     // console.log("")
   }
