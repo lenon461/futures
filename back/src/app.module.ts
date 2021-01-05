@@ -1,11 +1,7 @@
-import { Module } from '@nestjs/common';
-import { ChartModule } from './chart/chart.module';
-import { EventsModule } from './events/events.module';
-import { SummonersModule } from './summoners/summoners.module';
-import { PointsModule } from './points/points.module';
-import { OrdersModule } from './orders/orders.module';
 import { BullModule } from '@nestjs/bull';
-import { ProcessorModule } from './processor/processor.module';
+import { Module } from '@nestjs/common';
+import { OrdersModule } from './orders/orders.module';
+import { SummonersModule } from './summoners/summoners.module';
 
 @Module({
   imports: [
@@ -15,8 +11,8 @@ import { ProcessorModule } from './processor/processor.module';
         port: 6379,
       },
     }),
-    ProcessorModule, OrdersModule,
-    ChartModule, EventsModule, SummonersModule, PointsModule],
+     OrdersModule,
+     SummonersModule, ],
 })
 
 export class AppModule { }

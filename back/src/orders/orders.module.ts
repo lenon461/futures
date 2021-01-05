@@ -1,10 +1,9 @@
-import { Module } from '@nestjs/common';
-import { OrdersService } from './orders.service';
-import { ordersProviders } from './orders.provider';
-import { OrdersController } from './orders.controller';
-import { DatabaseModule } from '../database/database.module';
 import { BullModule } from '@nestjs/bull';
-import { OrdersProcessor } from './orders.processor'
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '../database/database.module';
+import { OrdersController } from './orders.controller';
+import { ordersProviders } from './orders.provider';
+import { OrdersService } from './orders.service';
 
 @Module({
   imports: [
@@ -13,6 +12,6 @@ import { OrdersProcessor } from './orders.processor'
     }),
     DatabaseModule],
   controllers: [OrdersController],
-  providers: [OrdersService, OrdersProcessor, ...ordersProviders]
+  providers: [OrdersService,  ...ordersProviders]
 })
 export class OrdersModule { }

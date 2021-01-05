@@ -7,8 +7,8 @@ class Trader {
     MKNAME = "TEST"
 
     //오더북
-    private SellOrderBook: IOrder[][] = []
-    private BuyOrderBook: IOrder[][] = [];
+    private SellOrderBook: any = []
+    private BuyOrderBook: any = [];
 
     constructor(MKNAME) {
         this.MKNAME = MKNAME
@@ -34,64 +34,64 @@ class Trader {
     }
 
     initializeOrderBook() {
-        // this.SellOrderBook = [
-        //     [{
-        //         price: 10,
-        //         amount: 10,
-        //         type: "B",
-        //         status: "GO"
-        //     }],
-        //     [{
-        //         price: 20,
-        //         amount: 10,
-        //         type: "B",
-        //         status: "GO"
-        //     }],
-        //     [{
-        //         price: 30,
-        //         amount: 10,
-        //         type: "B",
-        //         status: "GO"
-        //     }],
-        //     [   
-        //         {
-        //             price: 40,
-        //             amount: 10,
-        //             type: "B",
-        //             status: "GO",
-        //             memberId: 1,
-        //         },{
-        //             price: 40,
-        //             amount: 20,
-        //             type: "B",
-        //             status: "GO",
-        //             memberId: 2,
-        //         }]];
-        // this.BuyOrderBook = [
-        //     [{
-        //         price: 130,
-        //         amount: 10,
-        //         type: "S",
-        //         status: "GO"
-        //     }],
-        //     [{
-        //         price: 120,
-        //         amount: 10,
-        //         type: "S",
-        //         status: "GO"
-        //     }],
-        //     [{
-        //         price: 110,
-        //         amount: 10,
-        //         type: "S",
-        //         status: "GO"
-        //     }],
-        //     [{
-        //         price: 100,
-        //         amount: 10,
-        //         type: "S",
-        //         status: "GO"
-        //     }],]
+        this.SellOrderBook = [
+            [{
+                price: 10,
+                amount: 10,
+                type: "B",
+                status: "GO"
+            }],
+            [{
+                price: 20,
+                amount: 10,
+                type: "B",
+                status: "GO"
+            }],
+            [{
+                price: 30,
+                amount: 10,
+                type: "B",
+                status: "GO"
+            }],
+            [   
+                {
+                    price: 40,
+                    amount: 10,
+                    type: "B",
+                    status: "GO",
+                    memberId: 1,
+                },{
+                    price: 40,
+                    amount: 20,
+                    type: "B",
+                    status: "GO",
+                    memberId: 2,
+                }]];
+        this.BuyOrderBook = [
+            [{
+                price: 130,
+                amount: 10,
+                type: "S",
+                status: "GO"
+            }],
+            [{
+                price: 120,
+                amount: 10,
+                type: "S",
+                status: "GO"
+            }],
+            [{
+                price: 110,
+                amount: 10,
+                type: "S",
+                status: "GO"
+            }],
+            [{
+                price: 100,
+                amount: 10,
+                type: "S",
+                status: "GO"
+            }],]
     }
 
     // getter
