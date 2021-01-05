@@ -2,7 +2,7 @@
   <div class="trade">
     <SymbolSwitcher/>
     <OrderBox/>
-    <OrderBook :OrderBook="OrderBook"/>
+    <OrderBook :depth="depth"/>
   </div>
 </template>
 
@@ -22,14 +22,14 @@ import socket from "../api/socket";
   }
 })
 export default class Trade extends Vue {
-  public OrderBook = {}
+  public depth = {}
 
-  setOrderBook(data){ 
-    this.OrderBook = JSON.parse(JSON.parse(data));
+  setDepth(data){ 
+    this.depth = JSON.parse(JSON.parse(data));
   }
   created() {
     socket.emit('subscribe', 'depth@PAKA')
-    socket.on('depth', this.setOrderBook)
+    socket.on('depth', this.setDepth)
   }
 
   private fav;

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateSummonerDto } from './dto/create-summoner.dto';
 import { Summoner } from './interfaces/summoner.interface';
@@ -6,6 +6,7 @@ import { Summoner } from './interfaces/summoner.interface';
 @Injectable()
 export class SummonersService {
     constructor(@Inject('SUMMONER_MODEL') private readonly summonerModel: Model<Summoner>) { }
+    private readonly logger = new Logger(SummonersService.name);
 
     async create(createSummonerDto: CreateSummonerDto): Promise<Summoner> {
         const createdSummoner = new this.summonerModel(createSummonerDto);
@@ -16,7 +17,7 @@ export class SummonersService {
         return this.summonerModel.findOne({ name })
     }
 
-    async findAll(): Promise<Summoner[]> {
-        return this.summonerModel.find().exec();
+    async findAll(_cond): Promise<Summoner[]> {
+        return this.summonerModel.find({}).exec();
     }
 }

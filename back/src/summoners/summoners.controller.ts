@@ -1,11 +1,12 @@
-import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
 import { CreateSummonerDto } from './dto/create-summoner.dto';
-import { SummonersService } from './summoners.service';
 import { Summoner } from './interfaces/summoner.interface';
+import { SummonersService } from './summoners.service';
 
 @Controller('summoners')
 export class SummonersController {
     constructor(private readonly summonersService: SummonersService) { }
+    private readonly logger = new Logger(SummonersController.name);
 
     @Post()
     async create(@Body() createSummonerDto: CreateSummonerDto) {
@@ -23,8 +24,10 @@ export class SummonersController {
     }
 
     @Get()
-    async findAll(): Promise<Summoner[]> {
-        return this.summonersService.findAll();
+    async findAll(@Query('name') name: string): Promise<Summoner[]> {
+        const cond = {name}
+        const summoners = await this.summonersService.findAll(cond)
+        return summoners;
     }
     @Get('by-name/:name')
     async findbyName(@Param('name') name: string): Promise<Summoner> {

@@ -1,7 +1,7 @@
 <template>
   <div class="order-book">
       <b-list-group>
-        <div class="ORDER" v-for="(item, index) in asks" :key ="item + index" >
+        <div class="ORDER" v-for="(item, index) in bids" :key ="item + index" >
           <b-list-group-item button>
             {{item}}
           </b-list-group-item>
@@ -9,7 +9,7 @@
       </b-list-group>
       <div class="CURRENT">CURRENT</div>
       <b-list-group>
-        <div class="ORDER" v-for="(item, index) in bids" :key ="item + index" >
+        <div class="ORDER" v-for="(item, index) in asks" :key ="item + index" >
           <b-list-group-item button>
             {{item}}
           </b-list-group-item>
@@ -25,12 +25,12 @@ import {State, Action, Getter} from 'vuex-class';
 @Component
 export default class OrderBook extends Vue {
   
-  @Prop() readonly OrderBook!: any
-  get asks() {
-    return this.OrderBook.S
-  }
+  @Prop() readonly depth!: any
   get bids() {
-    return this.OrderBook.B
+    return this.depth.B
+  }
+  get asks() {
+    return this.depth.S
   }
   created() {
     // console.log("")
