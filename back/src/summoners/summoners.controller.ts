@@ -1,14 +1,21 @@
 import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
+import {
+    ApiOperation,
+    ApiResponse,
+    ApiTags
+} from '@nestjs/swagger';
 import { CreateSummonerDto } from './dto/create-summoner.dto';
 import { Summoner } from './interfaces/summoner.interface';
 import { SummonersService } from './summoners.service';
-
+@ApiTags('summoners')
 @Controller('summoners')
 export class SummonersController {
     constructor(private readonly summonersService: SummonersService) { }
     private readonly logger = new Logger(SummonersController.name);
 
+    @ApiOperation({summary: 'Create Summoner'})
     @Post()
+    @ApiResponse({ status: 403, description: 'Forbidden.' })
     async create(@Body() createSummonerDto: CreateSummonerDto) {
         console.log(createSummonerDto)
         // createSummonerDto = {
@@ -24,6 +31,11 @@ export class SummonersController {
     }
 
     @Get()
+    @ApiResponse({
+        status: 200,
+        description: 'The found record',
+        // type: Summoner,
+      })
     async findAll(@Query('name') name: string): Promise<Summoner[]> {
         const cond = {name}
         const summoners = await this.summonersService.findAll(cond)

@@ -7,11 +7,21 @@
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(1);
-const app_module_1 = __webpack_require__(2);
+const swagger_1 = __webpack_require__(2);
+const app_module_1 = __webpack_require__(3);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    const options = new swagger_1.DocumentBuilder()
+        .setTitle('Futures')
+        .setDescription('Futures API description :>')
+        .setVersion('1.0')
+        .addTag('summoners')
+        .build();
+    const document = swagger_1.SwaggerModule.createDocument(app, options);
+    swagger_1.SwaggerModule.setup('api', app, document);
     app.enableCors();
     await app.listen(5002);
+    console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
 
@@ -24,6 +34,12 @@ module.exports = require("@nestjs/core");;
 
 /***/ }),
 /* 2 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/swagger");;
+
+/***/ }),
+/* 3 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -35,10 +51,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AppModule = void 0;
-const common_1 = __webpack_require__(3);
-const logger_1 = __webpack_require__(4);
-const orders_module_1 = __webpack_require__(5);
-const summoners_module_1 = __webpack_require__(17);
+const common_1 = __webpack_require__(4);
+const logger_1 = __webpack_require__(5);
+const orders_module_1 = __webpack_require__(6);
+const summoners_module_1 = __webpack_require__(18);
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -58,13 +74,13 @@ exports.AppModule = AppModule;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ ((module) => {
 
 module.exports = require("@nestjs/common");;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -76,7 +92,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LoggerMiddleware = void 0;
-const common_1 = __webpack_require__(3);
+const common_1 = __webpack_require__(4);
 let LoggerMiddleware = class LoggerMiddleware {
     constructor() {
         this.logger = new common_1.Logger('HTTP');
@@ -99,7 +115,7 @@ exports.LoggerMiddleware = LoggerMiddleware;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -111,12 +127,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersModule = void 0;
-const bull_1 = __webpack_require__(6);
-const common_1 = __webpack_require__(3);
-const database_module_1 = __webpack_require__(7);
-const orders_controller_1 = __webpack_require__(10);
-const orders_provider_1 = __webpack_require__(15);
-const orders_service_1 = __webpack_require__(11);
+const bull_1 = __webpack_require__(7);
+const common_1 = __webpack_require__(4);
+const database_module_1 = __webpack_require__(8);
+const orders_controller_1 = __webpack_require__(11);
+const orders_provider_1 = __webpack_require__(16);
+const orders_service_1 = __webpack_require__(12);
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
@@ -135,13 +151,13 @@ exports.OrdersModule = OrdersModule;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ ((module) => {
 
 module.exports = require("@nestjs/bull");;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -153,8 +169,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DatabaseModule = void 0;
-const common_1 = __webpack_require__(3);
-const database_providers_1 = __webpack_require__(8);
+const common_1 = __webpack_require__(4);
+const database_providers_1 = __webpack_require__(9);
 let DatabaseModule = class DatabaseModule {
 };
 DatabaseModule = __decorate([
@@ -167,13 +183,13 @@ exports.DatabaseModule = DatabaseModule;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.databaseProviders = void 0;
-const mongoose = __webpack_require__(9);
+const mongoose = __webpack_require__(10);
 exports.databaseProviders = [
     {
         provide: 'DATABASE_CONNECTION',
@@ -183,13 +199,13 @@ exports.databaseProviders = [
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ ((module) => {
 
 module.exports = require("mongoose");;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -208,11 +224,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var OrdersController_1, _a, _b, _c;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersController = void 0;
-const common_1 = __webpack_require__(3);
-const orders_service_1 = __webpack_require__(11);
-const create_order_dto_1 = __webpack_require__(12);
-const update_order_dto_1 = __webpack_require__(13);
-const common_2 = __webpack_require__(3);
+const common_1 = __webpack_require__(4);
+const orders_service_1 = __webpack_require__(12);
+const create_order_dto_1 = __webpack_require__(13);
+const update_order_dto_1 = __webpack_require__(14);
+const common_2 = __webpack_require__(4);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
@@ -280,7 +296,7 @@ exports.OrdersController = OrdersController;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -299,8 +315,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var OrdersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersService = void 0;
-const common_1 = __webpack_require__(3);
-const mongoose_1 = __webpack_require__(9);
+const common_1 = __webpack_require__(4);
+const mongoose_1 = __webpack_require__(10);
 let OrdersService = OrdersService_1 = class OrdersService {
     constructor(orderModel) {
         this.orderModel = orderModel;
@@ -337,7 +353,7 @@ exports.OrdersService = OrdersService;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -349,33 +365,33 @@ exports.CreateOrderDto = CreateOrderDto;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UpdateOrderDto = void 0;
-const mapped_types_1 = __webpack_require__(14);
-const create_order_dto_1 = __webpack_require__(12);
+const mapped_types_1 = __webpack_require__(15);
+const create_order_dto_1 = __webpack_require__(13);
 class UpdateOrderDto extends mapped_types_1.PartialType(create_order_dto_1.CreateOrderDto) {
 }
 exports.UpdateOrderDto = UpdateOrderDto;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ ((module) => {
 
 module.exports = require("@nestjs/mapped-types");;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ordersProviders = void 0;
-const order_schema_1 = __webpack_require__(16);
+const order_schema_1 = __webpack_require__(17);
 exports.ordersProviders = [
     {
         provide: 'ORDER_MODEL',
@@ -386,13 +402,13 @@ exports.ordersProviders = [
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrderSchema = void 0;
-const mongoose = __webpack_require__(9);
+const mongoose = __webpack_require__(10);
 exports.OrderSchema = new mongoose.Schema({
     id: String,
     memberId: String,
@@ -406,7 +422,7 @@ exports.OrderSchema = new mongoose.Schema({
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -418,11 +434,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersModule = void 0;
-const common_1 = __webpack_require__(3);
-const summoners_controller_1 = __webpack_require__(18);
-const summoners_provider_1 = __webpack_require__(21);
-const summoners_service_1 = __webpack_require__(20);
-const database_module_1 = __webpack_require__(7);
+const common_1 = __webpack_require__(4);
+const summoners_controller_1 = __webpack_require__(19);
+const summoners_provider_1 = __webpack_require__(22);
+const summoners_service_1 = __webpack_require__(21);
+const database_module_1 = __webpack_require__(8);
 let SummonersModule = class SummonersModule {
 };
 SummonersModule = __decorate([
@@ -436,7 +452,7 @@ exports.SummonersModule = SummonersModule;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -455,9 +471,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SummonersController_1, _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersController = void 0;
-const common_1 = __webpack_require__(3);
-const create_summoner_dto_1 = __webpack_require__(19);
-const summoners_service_1 = __webpack_require__(20);
+const common_1 = __webpack_require__(4);
+const swagger_1 = __webpack_require__(2);
+const create_summoner_dto_1 = __webpack_require__(20);
+const summoners_service_1 = __webpack_require__(21);
 let SummonersController = SummonersController_1 = class SummonersController {
     constructor(summonersService) {
         this.summonersService = summonersService;
@@ -477,7 +494,9 @@ let SummonersController = SummonersController_1 = class SummonersController {
     }
 };
 __decorate([
+    swagger_1.ApiOperation({ summary: 'Create Summoner' }),
     common_1.Post(),
+    swagger_1.ApiResponse({ status: 403, description: 'Forbidden.' }),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_a = typeof create_summoner_dto_1.CreateSummonerDto !== "undefined" && create_summoner_dto_1.CreateSummonerDto) === "function" ? _a : Object]),
@@ -485,6 +504,10 @@ __decorate([
 ], SummonersController.prototype, "create", null);
 __decorate([
     common_1.Get(),
+    swagger_1.ApiResponse({
+        status: 200,
+        description: 'The found record',
+    }),
     __param(0, common_1.Query('name')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -498,6 +521,7 @@ __decorate([
     __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
 ], SummonersController.prototype, "findbyName", null);
 SummonersController = SummonersController_1 = __decorate([
+    swagger_1.ApiTags('summoners'),
     common_1.Controller('summoners'),
     __metadata("design:paramtypes", [typeof (_d = typeof summoners_service_1.SummonersService !== "undefined" && summoners_service_1.SummonersService) === "function" ? _d : Object])
 ], SummonersController);
@@ -505,7 +529,7 @@ exports.SummonersController = SummonersController;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -517,7 +541,7 @@ exports.CreateSummonerDto = CreateSummonerDto;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -536,8 +560,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 var SummonersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersService = void 0;
-const common_1 = __webpack_require__(3);
-const mongoose_1 = __webpack_require__(9);
+const common_1 = __webpack_require__(4);
+const mongoose_1 = __webpack_require__(10);
 let SummonersService = SummonersService_1 = class SummonersService {
     constructor(summonerModel) {
         this.summonerModel = summonerModel;
@@ -563,13 +587,13 @@ exports.SummonersService = SummonersService;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.summonersProviders = void 0;
-const summoner_schema_1 = __webpack_require__(22);
+const summoner_schema_1 = __webpack_require__(23);
 exports.summonersProviders = [
     {
         provide: 'SUMMONER_MODEL',
@@ -580,13 +604,13 @@ exports.summonersProviders = [
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonerSchema = void 0;
-const mongoose = __webpack_require__(9);
+const mongoose = __webpack_require__(10);
 exports.SummonerSchema = new mongoose.Schema({
     id: String,
     accountId: String,

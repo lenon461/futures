@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^7.5.1",
     "@nestjs/platform-socket.io": "^7.5.2",
     "@nestjs/platform-ws": "^7.5.2",
+    "@nestjs/swagger": "^4.7.9",
     "@nestjs/websockets": "^7.5.2",
     "async-redis": "^1.1.7",
     "bull": "^3.20.0",
@@ -41,7 +42,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "socket.io-redis": "^6.0.1"
+    "socket.io-redis": "^6.0.1",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

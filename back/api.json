@@ -1,0 +1,126 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Futures",
+    "description": "Futures API description :>",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [{ "name": "summoners", "description": "" }],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CreateOrderDto": { "type": "object", "properties": {} },
+      "UpdateOrderDto": { "type": "object", "properties": {} },
+      "CreateSummonerDto": { "type": "object", "properties": {} }
+    }
+  },
+  "paths": {
+    "/orders": {
+      "post": {
+        "operationId": "OrdersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateOrderDto" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      },
+      "delete": {
+        "operationId": "OrdersController_cancelOrder",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/orders/{id}": {
+      "put": {
+        "operationId": "OrdersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateOrderDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/orders/all": {
+      "delete": {
+        "operationId": "OrdersController_deleteAll",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      },
+      "get": {
+        "operationId": "OrdersController_findAll",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/summoners": {
+      "post": {
+        "operationId": "SummonersController_create",
+        "summary": "Create Summoner",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSummonerDto" }
+            }
+          }
+        },
+        "responses": { "403": { "description": "Forbidden." } },
+        "tags": ["summoners"]
+      },
+      "get": {
+        "operationId": "SummonersController_findAll",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "The found record" } },
+        "tags": ["summoners"]
+      }
+    },
+    "/summoners/by-name/{name}": {
+      "get": {
+        "operationId": "SummonersController_findbyName",
+        "parameters": [
+          {
+            "name": "name",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["summoners"]
+      }
+    }
+  }
+}
