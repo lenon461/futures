@@ -44,5 +44,5 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   });
 
-let cxios = instance
+const cxios = instance
 export default cxios;

@@ -42,3 +42,6 @@ export default class Market extends Vue {
   
 }
 </script>
+
+<style lang="scss" scoped>
+</style>

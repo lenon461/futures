@@ -1,8 +1,10 @@
 <template>
   <div class="trade">
     <SymbolSwitcher/>
-    <OrderBox/>
-    <OrderBook :depth="depth"/>
+    <div class="order-wrap">
+      <OrderBox class="order-box"/>
+      <OrderBook :depth="depth" class="order-book"/>
+    </div>
   </div>
 </template>
 
@@ -35,3 +37,16 @@ export default class Trade extends Vue {
   private fav;
 }
 </script>
+<style lang="scss" scoped>
+.order-wrap {
+  display: flex;
+  .order {
+    &-box {
+      width: 60%;
+    }
+    &-book {
+      width: 40%;
+    }
+  }
+}
+</style>
