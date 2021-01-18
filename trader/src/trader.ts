@@ -1,4 +1,5 @@
 import { publisher } from './Pub';
+import MODEL from './database'
 class Trader {
 
     private readonly logger = console
@@ -33,65 +34,17 @@ class Trader {
         }, 1000);
     }
 
-    initializeOrderBook() {
-        this.SellOrderBook = [
-            [{
-                price: 10,
-                amount: 10,
-                type: "B",
-                status: "GO"
-            }],
-            [{
-                price: 20,
-                amount: 10,
-                type: "B",
-                status: "GO"
-            }],
-            [{
-                price: 30,
-                amount: 10,
-                type: "B",
-                status: "GO"
-            }],
-            [   
-                {
-                    price: 40,
-                    amount: 10,
-                    type: "B",
-                    status: "GO",
-                    memberId: 1,
-                },{
-                    price: 40,
-                    amount: 20,
-                    type: "B",
-                    status: "GO",
-                    memberId: 2,
-                }]];
-        this.BuyOrderBook = [
-            [{
-                price: 130,
-                amount: 10,
-                type: "S",
-                status: "GO"
-            }],
-            [{
-                price: 120,
-                amount: 10,
-                type: "S",
-                status: "GO"
-            }],
-            [{
-                price: 110,
-                amount: 10,
-                type: "S",
-                status: "GO"
-            }],
-            [{
-                price: 100,
-                amount: 10,
-                type: "S",
-                status: "GO"
-            }],]
+    async initializeOrderBook() {
+        
+        // orderbook 이 먼저 init 되는걸 보장해주어야함. need to be fix
+        this.SellOrderBook = await MODEL.ORDER_MODEL.find()
+            .where('status').equals('GO')
+            .where('type').equals('S')
+            .sort('price')
+        this.BuyOrderBook = await MODEL.ORDER_MODEL.find()
+            .where('status').equals('GO')
+            .where('type').equals('B')
+            .sort('-price')
     }
 
     // getter
@@ -102,6 +55,8 @@ class Trader {
         return this.SellOrderBook
     }
     getOrderBooks() {
+        console.log("this.getSellOrderBook()")
+        console.log(this.getSellOrderBook())
         return {
             name: this.MKNAME,
             S: this.getSellOrderBook().map(orders => orders.map(order => {

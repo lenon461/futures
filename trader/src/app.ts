@@ -4,8 +4,8 @@ import createError from "http-errors";
 import mongoose from 'mongoose';
 import morgan from "morgan";
 import router from "./routes/index";
-import { Summoner, SummonerSchema } from './schemas/summoner';
 import Trader from './trader';
+import MODEL from './database'
 const app = express();
 
 app.use(morgan("dev"));
@@ -39,9 +39,7 @@ app.use(
 (async () => {
     
     const uri = "mongodb+srv://seonjl:seonjl@cluster0.gbwnb.mongodb.net/futures"
-    const conn = await mongoose.createConnection(uri, { poolSize: 4, useNewUrlParser: true, useUnifiedTopology: true });
-    const SUMMONER_MODEL = conn.model<Summoner>('summoners', SummonerSchema);
-    const summoners = await SUMMONER_MODEL.find({}).exec()
+    const summoners = await MODEL.SUMMONER_MODEL.find({}).exec()
     
     // Subscribe()
     // Publish()
