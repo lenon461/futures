@@ -1,44 +1,45 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Logger } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Logger } from '@nestjs/common';
-
+import { Order } from './interfaces/order.interface';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    private readonly ordersService: OrdersService,
-  ) { }
-
+  constructor(private readonly ordersService: OrdersService, @InjectQueue('order') private readonly orderQueue: Queue) { }
   private readonly logger = new Logger(OrdersController.name);
 
   @Post()
-  async create(@Body() createOrderDto: CreateOrderDto) {
-    this.logger.debug("create")
+  @ApiOperation({summary: 'Create Order'})
+  @ApiResponse({status: 201, description: 'Created'})
+  async postOrder(@Body() createOrderDto: CreateOrderDto) {
     const order = await this.ordersService.create(createOrderDto);
+    this.logger.debug(createOrderDto.marketId.toString())
+    this.orderQueue.add(createOrderDto.marketId.toString(), order, {attempts: 5, backoff: 1000})
     return order
   }
 
-  @Delete('')
-  async cancelOrder(@Param('id') id: string) {
-    const order = await this.ordersService.find(id)
-    return 200;
+  @Get()
+  async getOrderAll(): Promise<Order[]> {
+      const orders = await this.ordersService.readAll()
+      return orders
+  }
+  
+  @Get(':id')
+  async getOrderOne(@Param('id') id: string): Promise<Order[]> {
+      const orders = await this.ordersService.readOne(id)
+      return orders
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  async putOrderOne(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+    return this.ordersService.updateOne(id, updateOrderDto);
   }
 
-  @Delete('all')
-  deleteAll() {
-    this.logger.debug("deleteAll")
-    this.ordersService.deleteAll();
-    return 200;
-  }
-
-  @Get('all')
-  findAll() {
-    return this.ordersService.findAll();
+  @Delete(':id')
+  async deleteOrderAll(@Param('id') id: string) {
+    return this.ordersService.deleteAll(id);
   }
 }

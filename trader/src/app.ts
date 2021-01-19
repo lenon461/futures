@@ -1,18 +1,30 @@
 import cors from "cors";
 import express from "express";
 import createError from "http-errors";
-import mongoose from 'mongoose';
 import morgan from "morgan";
-import router from "./routes/index";
+import routerrr from "./routes/index";
 import Trader from './trader';
 import MODEL from './database'
+
+const Queue = require('bull')
+const QueueMQ = require('bullmq')
+const { setQueues, BullMQAdapter, BullAdapter } = require('bull-board')
+
+const someQueue = new Queue(`order`, {redis: {port: 6379, host: '127.0.0.1'}})
+
+setQueues([
+  new BullAdapter(someQueue),
+]);
+
 const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
+const {router} = require('bull-board')
 
-app.use("/", router);
+app.use("/", routerrr);
+app.use('/admin/queues', router)
 
 app.use((req, res, next) => {
     next(createError(404));

@@ -10,14 +10,15 @@ export class SummonersService {
 
     async create(createSummonerDto: CreateSummonerDto): Promise<Summoner> {
         const createdSummoner = new this.summonerModel(createSummonerDto);
-        return createdSummoner.save();
+        const summoner = await createdSummoner.save();
+        return summoner;
     }
 
-    async findOne(name: string): Promise<Summoner> {
+    async readOne(name: string): Promise<Summoner> {
         return this.summonerModel.findOne({ name })
     }
 
-    async findAll(_cond): Promise<Summoner[]> {
+    async readAll(): Promise<Summoner[]> {
         return this.summonerModel.find({}).exec();
     }
 }

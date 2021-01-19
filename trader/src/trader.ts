@@ -1,11 +1,15 @@
 import { publisher } from './Pub';
+import _ from 'lodash'
 import MODEL from './database'
+import Queue from 'bull'
+import { ProxyAuthenticationRequired } from 'http-errors';
 class Trader {
 
     private readonly logger = console
-
+    
     // 마켓정보
     MKNAME = "TEST"
+    private readonly Queue =  new Queue(`order`, {redis: {port: 6379, host: '127.0.0.1'}}); // Specify Redis connection using object
 
     //오더북
     private SellOrderBook: any = []
@@ -16,6 +20,7 @@ class Trader {
         this.initializeOrderBook();
         this.logger.debug(MKNAME + "Trade init")
         this.publish()
+        this.process()
     }
 
     publish() {
@@ -34,17 +39,23 @@ class Trader {
         }, 1000);
     }
 
+    process() {
+        this.Queue.process(this.MKNAME, (job, done) => {
+            console.log(this.MKNAME + " process", job.data.price, job.data.amount)
+            this._addOrder(job.data)
+
+            done();
+        })
+    }
+
     async initializeOrderBook() {
         
         // orderbook 이 먼저 init 되는걸 보장해주어야함. need to be fix
-        this.SellOrderBook = await MODEL.ORDER_MODEL.find()
+        (await MODEL.ORDER_MODEL.find()
             .where('status').equals('GO')
-            .where('type').equals('S')
-            .sort('price')
-        this.BuyOrderBook = await MODEL.ORDER_MODEL.find()
-            .where('status').equals('GO')
-            .where('type').equals('B')
-            .sort('-price')
+            .sort('price')).forEach(val => this._addOrder(val));
+
+        
     }
 
     // getter
@@ -55,8 +66,6 @@ class Trader {
         return this.SellOrderBook
     }
     getOrderBooks() {
-        console.log("this.getSellOrderBook()")
-        console.log(this.getSellOrderBook())
         return {
             name: this.MKNAME,
             S: this.getSellOrderBook().map(orders => orders.map(order => {
@@ -91,7 +100,7 @@ class Trader {
     }
 
     // public logic
-    public addOrder(order: IOrder) {
+    public addOrder(order: any) {
 
         // const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
         // const takerOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
@@ -104,7 +113,7 @@ class Trader {
 
 
     // private logic
-    private _addOrder(order: IOrder) {
+    private _addOrder(order: any) {
         const mergeOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
         const thisOrder = order;
         const flattened = targetOrderBook => [].concat(...targetOrderBook)
@@ -152,7 +161,7 @@ class Trader {
         }
 
     }
-    private doTrade(order: IOrder) {
+    private doTrade(order: any) {
         const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
         const flattened = targetOrderBook => [].concat(...targetOrderBook)
         if (flattened(makerOrderBook).length === 0) {

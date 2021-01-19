@@ -14,7 +14,7 @@ const Subscribe = (io) => {
         }
         if(event === '#depth') {
             const name = JSON.parse(message).name
-            io.to(name).emit('depth', JSON.stringify(message))
+            io.to(name).emit('depth', (message))
         }
     });
 }

@@ -2,38 +2,37 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { DOrder } from './interfaces/order.interface';
+import { Order } from './interfaces/order.interface';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @Inject('ORDER_MODEL') private readonly orderModel: Model<DOrder>,
+    @Inject('ORDER_MODEL') private readonly orderModel: Model<Order>,
     ) { 
   }
   private readonly logger = new Logger(OrdersService.name);
 
-  async create(createOrderDto: CreateOrderDto): Promise<DOrder> {
+  async create(createOrderDto: CreateOrderDto): Promise<Order> {
     const createdOrder = new this.orderModel(createOrderDto);
     const order = await createdOrder.save();
     return order
   }
-  async find(_id: string) {
-    const order =  await this.orderModel.findOne({_id}).exec();
+  async readOne(id: string) {
+    const order =  await this.orderModel.find({id}).exec();
     return order
   }
   
-  async findAll() {
+  async readAll() {
     const order =  await this.orderModel.find().exec();
     return order
   }
 
-  async update(_id: number, updateOrderDto: UpdateOrderDto) {
-    const result =  await this.orderModel.updateOne({_id}, updateOrderDto).exec();
-    this.logger.debug("update")
+  async updateOne(id: string, updateOrderDto: UpdateOrderDto) {
+    const result =  await this.orderModel.updateOne({id}, updateOrderDto).exec();
   }
 
-  deleteAll() {
-    this.orderModel.deleteMany({status: "GO"});
-    this.orderModel.deleteMany({status: "CM"});
+  async deleteAll(id) {
+    const result = await this.orderModel.deleteMany({id})
+    return result
   }
 }

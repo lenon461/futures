@@ -27,7 +27,7 @@ export default class Trade extends Vue {
   public depth = {}
 
   setDepth(data){ 
-    this.depth = JSON.parse(JSON.parse(data));
+    this.depth = (JSON.parse(data));
   }
   created() {
     socket.emit('subscribe', 'depth@PAKA')

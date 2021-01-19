@@ -1,9 +1,5 @@
-import { Body, Controller, Get, Logger, Param, Post, Query } from '@nestjs/common';
-import {
-    ApiOperation,
-    ApiResponse,
-    ApiTags
-} from '@nestjs/swagger';
+import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateSummonerDto } from './dto/create-summoner.dto';
 import { Summoner } from './interfaces/summoner.interface';
 import { SummonersService } from './summoners.service';
@@ -13,11 +9,12 @@ export class SummonersController {
     constructor(private readonly summonersService: SummonersService) { }
     private readonly logger = new Logger(SummonersController.name);
 
-    @ApiOperation({summary: 'Create Summoner'})
     @Post()
+    @ApiOperation({summary: 'Create Summoner'})
+    @ApiResponse({status: 200, description: 'The found record'})
+    @ApiResponse({status: 201, description: 'Created'})
     @ApiResponse({ status: 403, description: 'Forbidden.' })
-    async create(@Body() createSummonerDto: CreateSummonerDto) {
-        console.log(createSummonerDto)
+    async postSummoner(@Body() createSummonerDto: CreateSummonerDto) {
         // createSummonerDto = {
         //     "id": "PuzxQYhd76OEtLo55Y2TjmLilKnfxCdgg1JTU2YaNw57Jk4",
         //     "accountId": "U3QyfPOkmQAtRT3zrN4RnPDmgXvcnxwHGhV3QjM4mIttHOM",
@@ -31,18 +28,12 @@ export class SummonersController {
     }
 
     @Get()
-    @ApiResponse({
-        status: 200,
-        description: 'The found record',
-        // type: Summoner,
-      })
-    async findAll(@Query('name') name: string): Promise<Summoner[]> {
-        const cond = {name}
-        const summoners = await this.summonersService.findAll(cond)
-        return summoners;
+    async getSummonerAll(): Promise<Summoner[]> {
+        const summoners = await this.summonersService.readAll()
+        return summoners
     }
-    @Get('by-name/:name')
-    async findbyName(@Param('name') name: string): Promise<Summoner> {
-        return this.summonersService.findOne(name)
+    @Get(':name')
+    async getSummonerOne(@Param('name') name: string): Promise<Summoner> {
+        return this.summonersService.readOne(name)
     }
 }

@@ -55,6 +55,7 @@ const common_1 = __webpack_require__(4);
 const logger_1 = __webpack_require__(5);
 const orders_module_1 = __webpack_require__(6);
 const summoners_module_1 = __webpack_require__(18);
+const bull_1 = __webpack_require__(7);
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -65,6 +66,12 @@ let AppModule = class AppModule {
 AppModule = __decorate([
     common_1.Module({
         imports: [
+            bull_1.BullModule.forRoot({
+                redis: {
+                    host: 'localhost',
+                    port: 6379,
+                },
+            }),
             orders_module_1.OrdersModule,
             summoners_module_1.SummonersModule,
         ],
@@ -139,7 +146,7 @@ OrdersModule = __decorate([
     common_1.Module({
         imports: [
             bull_1.BullModule.registerQueue({
-                name: 'orders',
+                name: 'order',
             }),
             database_module_1.DatabaseModule
         ],
@@ -221,76 +228,83 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var OrdersController_1, _a, _b, _c;
+var OrdersController_1, _a, _b, _c, _d, _e, _f;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersController = void 0;
 const common_1 = __webpack_require__(4);
+const swagger_1 = __webpack_require__(2);
 const orders_service_1 = __webpack_require__(12);
 const create_order_dto_1 = __webpack_require__(13);
 const update_order_dto_1 = __webpack_require__(14);
-const common_2 = __webpack_require__(4);
+const bull_1 = __webpack_require__(7);
+const bull_2 = __webpack_require__(24);
 let OrdersController = OrdersController_1 = class OrdersController {
-    constructor(ordersService) {
+    constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
-        this.logger = new common_2.Logger(OrdersController_1.name);
+        this.orderQueue = orderQueue;
+        this.logger = new common_1.Logger(OrdersController_1.name);
     }
-    async create(createOrderDto) {
-        this.logger.debug("create");
+    async postOrder(createOrderDto) {
         const order = await this.ordersService.create(createOrderDto);
+        this.logger.debug(createOrderDto.marketId.toString());
+        this.orderQueue.add(createOrderDto.marketId.toString(), order, { attempts: 5, backoff: 1000 });
         return order;
     }
-    async cancelOrder(id) {
-        const order = await this.ordersService.find(id);
-        return 200;
+    async getOrderAll() {
+        const orders = await this.ordersService.readAll();
+        return orders;
     }
-    update(id, updateOrderDto) {
-        return this.ordersService.update(+id, updateOrderDto);
+    async getOrderOne(id) {
+        const orders = await this.ordersService.readOne(id);
+        return orders;
     }
-    deleteAll() {
-        this.logger.debug("deleteAll");
-        this.ordersService.deleteAll();
-        return 200;
+    async putOrderOne(id, updateOrderDto) {
+        return this.ordersService.updateOne(id, updateOrderDto);
     }
-    findAll() {
-        return this.ordersService.findAll();
+    async deleteOrderAll(id) {
+        return this.ordersService.deleteAll(id);
     }
 };
 __decorate([
     common_1.Post(),
+    swagger_1.ApiOperation({ summary: 'Create Order' }),
+    swagger_1.ApiResponse({ status: 201, description: 'Created' }),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_a = typeof create_order_dto_1.CreateOrderDto !== "undefined" && create_order_dto_1.CreateOrderDto) === "function" ? _a : Object]),
     __metadata("design:returntype", Promise)
-], OrdersController.prototype, "create", null);
+], OrdersController.prototype, "postOrder", null);
 __decorate([
-    common_1.Delete(''),
+    common_1.Get(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+], OrdersController.prototype, "getOrderAll", null);
+__decorate([
+    common_1.Get(':id'),
     __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], OrdersController.prototype, "cancelOrder", null);
+    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], OrdersController.prototype, "getOrderOne", null);
 __decorate([
     common_1.Put(':id'),
     __param(0, common_1.Param('id')), __param(1, common_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, typeof (_b = typeof update_order_dto_1.UpdateOrderDto !== "undefined" && update_order_dto_1.UpdateOrderDto) === "function" ? _b : Object]),
-    __metadata("design:returntype", void 0)
-], OrdersController.prototype, "update", null);
+    __metadata("design:paramtypes", [String, typeof (_d = typeof update_order_dto_1.UpdateOrderDto !== "undefined" && update_order_dto_1.UpdateOrderDto) === "function" ? _d : Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "putOrderOne", null);
 __decorate([
-    common_1.Delete('all'),
+    common_1.Delete(':id'),
+    __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], OrdersController.prototype, "deleteAll", null);
-__decorate([
-    common_1.Get('all'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], OrdersController.prototype, "findAll", null);
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "deleteOrderAll", null);
 OrdersController = OrdersController_1 = __decorate([
     common_1.Controller('orders'),
-    __metadata("design:paramtypes", [typeof (_c = typeof orders_service_1.OrdersService !== "undefined" && orders_service_1.OrdersService) === "function" ? _c : Object])
+    __param(1, bull_1.InjectQueue('order')),
+    __metadata("design:paramtypes", [typeof (_e = typeof orders_service_1.OrdersService !== "undefined" && orders_service_1.OrdersService) === "function" ? _e : Object, typeof (_f = typeof bull_2.Queue !== "undefined" && bull_2.Queue) === "function" ? _f : Object])
 ], OrdersController);
 exports.OrdersController = OrdersController;
 
@@ -327,21 +341,20 @@ let OrdersService = OrdersService_1 = class OrdersService {
         const order = await createdOrder.save();
         return order;
     }
-    async find(_id) {
-        const order = await this.orderModel.findOne({ _id }).exec();
+    async readOne(id) {
+        const order = await this.orderModel.find({ id }).exec();
         return order;
     }
-    async findAll() {
+    async readAll() {
         const order = await this.orderModel.find().exec();
         return order;
     }
-    async update(_id, updateOrderDto) {
-        const result = await this.orderModel.updateOne({ _id }, updateOrderDto).exec();
-        this.logger.debug("update");
+    async updateOne(id, updateOrderDto) {
+        const result = await this.orderModel.updateOne({ id }, updateOrderDto).exec();
     }
-    deleteAll() {
-        this.orderModel.deleteMany({ status: "GO" });
-        this.orderModel.deleteMany({ status: "CM" });
+    async deleteAll(id) {
+        const result = await this.orderModel.deleteMany({ id });
+        return result;
     }
 };
 OrdersService = OrdersService_1 = __decorate([
@@ -480,46 +493,41 @@ let SummonersController = SummonersController_1 = class SummonersController {
         this.summonersService = summonersService;
         this.logger = new common_1.Logger(SummonersController_1.name);
     }
-    async create(createSummonerDto) {
-        console.log(createSummonerDto);
+    async postSummoner(createSummonerDto) {
         this.summonersService.create(createSummonerDto);
     }
-    async findAll(name) {
-        const cond = { name };
-        const summoners = await this.summonersService.findAll(cond);
+    async getSummonerAll() {
+        const summoners = await this.summonersService.readAll();
         return summoners;
     }
-    async findbyName(name) {
-        return this.summonersService.findOne(name);
+    async getSummonerOne(name) {
+        return this.summonersService.readOne(name);
     }
 };
 __decorate([
-    swagger_1.ApiOperation({ summary: 'Create Summoner' }),
     common_1.Post(),
+    swagger_1.ApiOperation({ summary: 'Create Summoner' }),
+    swagger_1.ApiResponse({ status: 200, description: 'The found record' }),
+    swagger_1.ApiResponse({ status: 201, description: 'Created' }),
     swagger_1.ApiResponse({ status: 403, description: 'Forbidden.' }),
     __param(0, common_1.Body()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [typeof (_a = typeof create_summoner_dto_1.CreateSummonerDto !== "undefined" && create_summoner_dto_1.CreateSummonerDto) === "function" ? _a : Object]),
     __metadata("design:returntype", Promise)
-], SummonersController.prototype, "create", null);
+], SummonersController.prototype, "postSummoner", null);
 __decorate([
     common_1.Get(),
-    swagger_1.ApiResponse({
-        status: 200,
-        description: 'The found record',
-    }),
-    __param(0, common_1.Query('name')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
-], SummonersController.prototype, "findAll", null);
+], SummonersController.prototype, "getSummonerAll", null);
 __decorate([
-    common_1.Get('by-name/:name'),
+    common_1.Get(':name'),
     __param(0, common_1.Param('name')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
-], SummonersController.prototype, "findbyName", null);
+], SummonersController.prototype, "getSummonerOne", null);
 SummonersController = SummonersController_1 = __decorate([
     swagger_1.ApiTags('summoners'),
     common_1.Controller('summoners'),
@@ -569,12 +577,13 @@ let SummonersService = SummonersService_1 = class SummonersService {
     }
     async create(createSummonerDto) {
         const createdSummoner = new this.summonerModel(createSummonerDto);
-        return createdSummoner.save();
+        const summoner = await createdSummoner.save();
+        return summoner;
     }
-    async findOne(name) {
+    async readOne(name) {
         return this.summonerModel.findOne({ name });
     }
-    async findAll(_cond) {
+    async readAll() {
         return this.summonerModel.find({}).exec();
     }
 };
@@ -621,6 +630,12 @@ exports.SummonerSchema = new mongoose.Schema({
     summonerLevel: Number,
 });
 
+
+/***/ }),
+/* 24 */
+/***/ ((module) => {
+
+module.exports = require("bull");;
 
 /***/ })
 /******/ 	]);

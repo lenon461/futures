@@ -8,7 +8,7 @@ import { OrdersService } from './orders.service';
 @Module({
   imports: [
     BullModule.registerQueue({
-      name: 'orders',
+      name: 'order',
     }),
     DatabaseModule],
   controllers: [OrdersController],
