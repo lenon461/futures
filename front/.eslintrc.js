@@ -10,7 +10,10 @@ module.exports = {
     "@vue/prettier",
     "@vue/prettier/@typescript-eslint"
   ],
+  parser: "vue-eslint-parser",
   parserOptions: {
+    parser: "@typescript-eslint/parser",
+    sourceType: "module",
     ecmaVersion: 2020
   },
   rules: {
@@ -23,6 +26,11 @@ module.exports = {
         "**/__tests__/*.{j,t}s?(x)",
         "**/tests/unit/**/*.spec.{j,t}s?(x)"
       ],
+      rules: {
+        "@typescript-eslint/no-unused-vars": ["off"],
+        "@typescript-eslint/explicit-module-boundary-types": ["off"],
+        "@typescript-eslint/no-explicit-any": ["off"],
+      },
       env: {
         jest: true
       }

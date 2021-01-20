@@ -6,15 +6,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import {State, Action, Getter} from 'vuex-class';
+import { State, Action, Getter } from "vuex-class";
 
 @Component
 export default class SymbolSwitcher extends Vue {
-  
-  @Getter('getTicker') getTicker: any;
-  
+  @Getter("getTicker") getTicker: any;
+
   get items() {
-    return this.getTicker
+    return this.getTicker;
   }
   created() {
     // console.log("")
@@ -27,6 +26,6 @@ export default class SymbolSwitcher extends Vue {
 
 <style scoped>
 .symbol-switcher {
- border: 5px solid indianred;
+  border: 5px solid indianred;
 }
 </style>

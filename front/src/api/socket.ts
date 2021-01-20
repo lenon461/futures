@@ -1,7 +1,6 @@
 import { Manager } from "socket.io-client";
-import Store from '../store';
+import Store from "../store";
 class Socket {
-
   public manager = new Manager("ws://localhost:5004");
   public socket = this.manager.socket("/");
 
@@ -10,9 +9,9 @@ class Socket {
       console.log(`connect ${this.socket.id}`);
     });
 
-    this.socket.on('ticker', (tick) => {
-      Store.commit('updateTicker', tick)
-    })
+    this.socket.on("ticker", tick => {
+      Store.commit("updateTicker", tick);
+    });
 
     this.socket.on("disconnect", () => {
       console.log(`disconnect`);
@@ -23,19 +22,19 @@ class Socket {
       console.log(`pong (latency: ${Date.now() - start} ms)`);
     });
 
-    this.socket.emit("subscribe", 'ticker', () => {
+    this.socket.emit("subscribe", "ticker", () => {
       // console.log(`pong (latency: ${Date.now() - start} ms)`);
     });
   }
 
   on(event, callback) {
-    this.socket.on(event, callback)
+    this.socket.on(event, callback);
   }
   emit(event, payload) {
-    this.socket.emit(event, payload)
+    this.socket.emit(event, payload);
   }
 }
 
-const socket = new Socket()
+const socket = new Socket();
 
 export default socket;

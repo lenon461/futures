@@ -29,19 +29,17 @@ import socket from "../api/socket";
   }
 })
 export default class Market extends Vue {
-  summoners:any = []
-  error:any = []
+  summoners: any = [];
+  error: any = [];
   // async summoners() {
   //    return await Api.Summoners.getSummoners()
   // }
   async created() {
     // console.log("")
-     this.summoners = await Api.Summoners.getSummoners()
-     this.summoners = await Api.Summoners.getError()
+    this.summoners = await Api.Summoners.getSummoners();
+    this.summoners = await Api.Summoners.getError();
   }
-  
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -9,14 +9,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import Vue from "vue";
+import Component from "vue-class-component";
 import socket from "./api/socket";
 
 @Component
 export default class App extends Vue {
   created() {
-    socket.init()
+    socket.init();
   }
   mounted() {
     // console.log("mounted")

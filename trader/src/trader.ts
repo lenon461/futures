@@ -42,7 +42,7 @@ class Trader {
     process() {
         this.Queue.process(this.MKNAME, (job, done) => {
             console.log(this.MKNAME + " process", job.data.price, job.data.amount)
-            this._addOrder(job.data)
+            this.addOrder(job.data)
 
             done();
         })

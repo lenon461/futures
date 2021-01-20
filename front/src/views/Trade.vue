@@ -1,9 +1,9 @@
 <template>
   <div class="trade">
-    <SymbolSwitcher/>
+    <SymbolSwitcher />
     <div class="order-wrap">
-      <OrderBox class="order-box"/>
-      <OrderBook :depth="depth" class="order-book"/>
+      <OrderBox class="order-box" />
+      <OrderBook :depth="depth" class="order-book" />
     </div>
   </div>
 </template>
@@ -19,19 +19,19 @@ import socket from "../api/socket";
 @Component({
   components: {
     SymbolSwitcher,
-    OrderBox
-    ,OrderBook
+    OrderBox,
+    OrderBook
   }
 })
 export default class Trade extends Vue {
-  public depth = {}
+  public depth = {};
 
-  setDepth(data){ 
-    this.depth = (JSON.parse(data));
+  setDepth(data) {
+    this.depth = JSON.parse(data);
   }
   created() {
-    socket.emit('subscribe', 'depth@PAKA')
-    socket.on('depth', this.setDepth)
+    socket.emit("subscribe", "depth@PAKA");
+    socket.on("depth", this.setDepth);
   }
 
   private fav;

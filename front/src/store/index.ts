@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import ticker from './modules/ticker';
-
+import ticker from "./modules/ticker";
 
 Vue.use(Vuex);
 

@@ -3,7 +3,7 @@ import Subscribe, { getTicks } from './Sub';
 
 const io = new Server(5004, {
     cors: {
-        origin: "http://localhost:8080",
+        origin: "http://localhost:5001",
         methods: ["GET", "POST"],
     },
 });
