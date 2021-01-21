@@ -26,10 +26,10 @@ import { State, Action, Getter } from "vuex-class";
 export default class OrderBook extends Vue {
   @Prop() readonly depth!: any;
   get bids() {
-    return this.depth.B;
+    return this.depth.S;
   }
   get asks() {
-    return this.depth.S;
+    return this.depth.B;
   }
   created() {
     // console.log("")

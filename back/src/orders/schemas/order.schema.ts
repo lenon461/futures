@@ -5,7 +5,7 @@ export const OrderSchema = new mongoose.Schema({
     memberId: String,
     marketId: String,
     price: Number,
-    amount: Number,
+    qty: Number,
     type: String,
     status: String,
     time: Number,

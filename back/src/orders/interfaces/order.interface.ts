@@ -4,7 +4,7 @@ export interface Order extends Document {
     readonly memberId: String;
     readonly marketId: String;
     readonly price: Number;
-    readonly amount: Number;
+    readonly qty: Number;
     readonly type: String;
     readonly status: String;
     readonly time: Number;
