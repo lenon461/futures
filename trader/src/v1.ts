@@ -14,7 +14,7 @@ class Trader {
 
 
     //오더북
-    orderBook = new OrderBook()
+    private OrderBook: IOrderBook = { bids: [], asks: []};
 
     constructor(MKNAME) {
         this.logger.debug(MKNAME + " Trade init")
@@ -36,9 +36,8 @@ class Trader {
         setInterval(() => {
             // 1s 마다 전체 호가 Pub
             // TODO 업데이트된 값만 Pub 하도록 수정
-            const ob = this.orderBook.getOrderBook()
-            publisher.publish(`#depth`, JSON.stringify(ob))
-            console.log(ob)
+            publisher.publish(`#depth`, JSON.stringify(this.OrderBook))
+            console.log(this.OrderBook)
         }, 1000);
     }
 
@@ -66,60 +65,18 @@ class Trader {
             price: Number(dorder.price)
         }
 
-        
-        // if(dorder.type === 'S') this.orderBook.bidBook.tradeBid(order)
+        if(dorder.type === 'S') this.tradeBid(order)
+        // else if (dorder.type === 'B') this.tra(order)
 
-        if(dorder.type === 'S') this.orderBook.bidBook.addBid(order)
-        else if (dorder.type === 'B') this.orderBook.askBook.addAsk(order)
+        if(dorder.type === 'S') this.addBid(order)
+        else if (dorder.type === 'B') this.addAsk(order)
         else throw new Error("Unknown Order Type")
     }
 
-    trade(makers: Ask | Bid, taker: IOrder) {
-
-        for (const maker of makers.orders) {
-
-            if(maker.qty > taker.qty) {
-                makers.volume -= taker.qty
-                maker.qty -= taker.qty
-
-                return true;
-            }
-            else if(maker.qty === taker.qty) {
-                makers.volume -= taker.qty
-
-                return true;
-            }
-            else {
-                makers.volume -= taker.qty
-                taker.qty -= maker.qty
-                
-            }
-            
-        }
-    }
-
-   
-}
-
-
-class OrderBook {
-    bidBook: BidBook = new BidBook()
-    askBook: AskBook = new AskBook()
-
-    getOrderBook() {
-        return {
-            bid: this.bidBook.getBids(),
-            ask: this.askBook.getAsks()
-        }
-    }
-}
-class BidBook {
-    bids: Bid[] = []
-
     addBid(order: IOrder) {
-        const bid = this.bids.find(bid => bid.price === order.price)
+        const bid = this.OrderBook.bids.find(bid => bid.price === order.price)
         if(bid === undefined){
-            this.bids.push(new Bid(order))
+            this.OrderBook.bids.push(new Bid(order))
             return;
         }
         else if(bid){
@@ -127,19 +84,41 @@ class BidBook {
             bid.orders.push(order)
         }        
         else throw new Error("Unknown Order Bid")
-
-        this.sort()
-    }
-
-    sort() {
-        this.bids.sort((a, b) => b.price - a.price)
     }
     
-    getBids() {
-        return this.bids.map(bid => bid.getBid())
+    addAsk(order: IOrder) {
+        const ask = this.OrderBook.asks.find(ask => ask.price === order.price)
+        if(ask === undefined){
+            this.OrderBook.asks.push(new Ask(order))
+            return;
+        }
+        else if(ask){
+            ask.volume += order.qty;
+            ask.orders.push(order)
+        }        
+        else throw new Error("Unknown Order Ask")
     }
 
+    tradeBid(order: IOrder) {
+        const asks = this.OrderBook.asks.filter(ask => ask.price >= order.price)
+        if(asks.length) {
+            return false;
+        }
+    }
+   
+}
 
+
+
+interface IOrderBook {
+    bids: IBid[]
+    asks: IAsk[]
+}
+
+interface IBid {
+    volume: number;
+    price: number;
+    orders: IOrder[]    
 }
 class Bid {
     volume = 0;
@@ -150,16 +129,19 @@ class Bid {
         this.volume = order.qty
         this.orders.push(order)
     }
-
-    getBid() {
-        return {
-            volume: this.volume,
-            price: this.price
-        }
-    }
-    
 }
-class AskBook {
+class Ask  {
+    volume = 0;
+    price = 0;
+    orders: IOrder[] = [];
+    constructor(order: IOrder){
+        this.price = order.price
+        this.volume = order.qty
+        this.orders.push(order)
+    }
+}
+
+class Asks {
     asks: Ask[] = []
 
     addAsk(order: IOrder) {
@@ -178,31 +160,17 @@ class AskBook {
     }
 
     sort() {
-        this.asks.sort((a, b) => b.price - a.price)
-    }
-
-    getAsks() {
-        return this.asks.map(ask => ask.getAsk())
-    }
-}
-class Ask  {
-    volume = 0;
-    price = 0;
-    orders: IOrder[] = [];
-    constructor(order: IOrder){
-        this.price = order.price
-        this.volume = order.qty
-        this.orders.push(order)
-    }
-
-    getAsk() {
-        return {
-            volume: this.volume,
-            price: this.price
-        }
+        this.asks.sort((a, b) => a.price - b.price)
     }
 }
 
+
+
+interface IAsk {
+    volume: number;
+    price: number;
+    orders: IOrder[]
+}
 export interface IOrder {
     readonly id: String;
     qty: number;
