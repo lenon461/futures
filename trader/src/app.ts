@@ -55,8 +55,8 @@ app.use(
     
     // Subscribe()
     // Publish()
-
-    const Traders = summoners.map(summoner => new Trader(summoner.name))
+    const trader = new Trader(summoners[1].name)
+    // const Traders = summoners.map(summoner => new Trader(summoner.name))
     
     app.listen(5005, () => {
         console.info('5005 Trader Start')
