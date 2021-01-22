@@ -434,6 +434,7 @@ exports.OrderSchema = new mongoose.Schema({
     marketId: String,
     price: Number,
     qty: Number,
+    total_qty: Number,
     type: String,
     status: String,
     time: Number,
