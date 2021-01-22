@@ -205,6 +205,8 @@ class Trader {
                         seller.qty -= buyer.qty;
                         this.filledOrder(seller)
 
+                        // this.doTrade(seller)
+
                         return;
 
                     }
@@ -231,7 +233,7 @@ class Trader {
                         buyer.qty -= seller.qty
                         this.filledOrder(buyer)
 
-                        this.doTrade(buyer)
+                        // this._addOrder(buyer)
 
                         return;
                     }
@@ -253,9 +255,7 @@ class Trader {
     async filledOrder(order) {
         // this.ordersQueue.add('orderComplete', order)
         // this.Queue.add('orderComplete', order, {attempts: 5, backoff: 1000})
-        const updateOrder = order
-        updateOrder.status = 'CM'
-        await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: "CM"})
+        await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: order.status, qty: order.qty}, {useFindAndModify: false})
     }
 
     private cancelOrder() {
