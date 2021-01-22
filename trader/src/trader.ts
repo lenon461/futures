@@ -3,7 +3,16 @@ import _ from 'lodash'
 import MODEL from './database'
 import Queue from 'bull'
 import { ProxyAuthenticationRequired } from 'http-errors';
-import { DOrder } from 'schemas/order';
+interface Order extends Document {
+    readonly id: String;
+    readonly memberId: String;
+    readonly marketId: String;
+    readonly price: Number;
+    readonly qty: Number;
+    readonly type: String;
+    readonly status: String;
+    readonly time: Number;
+}
 class Trader {
 
     private readonly logger = console
@@ -14,7 +23,11 @@ class Trader {
 
 
     //오더북
-    orderBook = new OrderBook()
+    private OrderBook = {}
+
+    //오더북
+    private SellOrderBook: any = []
+    private BuyOrderBook: any = [];
 
     constructor(MKNAME) {
         this.logger.debug(MKNAME + " Trade init")
@@ -36,15 +49,14 @@ class Trader {
         setInterval(() => {
             // 1s 마다 전체 호가 Pub
             // TODO 업데이트된 값만 Pub 하도록 수정
-            const ob = this.orderBook.getOrderBook()
-            publisher.publish(`#depth`, JSON.stringify(ob))
-            console.log(ob)
+            publisher.publish(`#depth`, JSON.stringify(this.getOrderBooks()))
+            console.log(this.getOrderBooks())
         }, 1000);
     }
 
     process() {
         this.Queue.process(this.MKNAME, (job, done) => {
-            console.log(this.MKNAME + " process", job.data.price, job.data.amount)
+            console.log(this.MKNAME + " process", job.data.price, job.data.qty)
             this.addOrder(job.data)
 
             done();
@@ -52,160 +64,226 @@ class Trader {
     }
 
     async initializeOrderBook() {
+        // orderbook 이 먼저 init 되는걸 보장해주어야함. need to be fix
         (await MODEL.ORDER_MODEL.find()
-            .where('status')
-            .equals('GO')
-            .sort('-price'))
-            .forEach(dorder => this.addOrder(dorder));
+            .where('status').equals('GO')
+            .sort('time')).forEach(val => this.addOrder(val));
     }
 
-    addOrder(dorder: DOrder) {
-        const order: IOrder = {
-            id: dorder._id,
-            qty: Number(dorder.qty),
-            price: Number(dorder.price)
+    // getter
+    getBuyOrderBook() {
+        return this.BuyOrderBook
+    }
+    getSellOrderBook() {
+        return this.SellOrderBook
+    }
+    getOrderBooks() {
+        return {
+            name: this.MKNAME,
+            S: this.getSellOrderBook().map(orders => orders.map(order => {
+                return { price: order.price, qty: order.qty }
+            })),
+            B: this.getBuyOrderBook().map(orders => orders.map(order => {
+                return { price: order.price, qty: order.qty }
+            })),
         }
-
-        
-        // if(dorder.type === 'S') this.orderBook.bidBook.tradeBid(order)
-
-        if(dorder.type === 'S') this.orderBook.bidBook.addBid(order)
-        else if (dorder.type === 'B') this.orderBook.askBook.addAsk(order)
-        else throw new Error("Unknown Order Type")
     }
 
-    trade(makers: Ask | Bid, taker: IOrder) {
+    // visual
+    showOrderBooks() {
+        const showOrderBook = (ob: IOrder[][]) => {
+            return ob.map(orders => {
+                if (orders.length !== 0) {
+                    const t_qty = orders.map(order => Number(order.qty)).reduce((p, c) => p + c, 0)
+                    const price = orders[0].price;
+                    return { t_qty, price }
+                }
+            })
+        }
+        this.logger.debug("==========================================")
+        this.logger.debug({
+            S: showOrderBook(this.getSellOrderBook()),
+            B: showOrderBook(this.getBuyOrderBook())
+        })
+        return {
+            S: showOrderBook(this.getSellOrderBook()),
+            B: showOrderBook(this.getBuyOrderBook())
+        }
+    }
 
-        for (const maker of makers.orders) {
+    // public logic
+    public addOrder(order: any) {
 
-            if(maker.qty > taker.qty) {
-                makers.volume -= taker.qty
-                maker.qty -= taker.qty
+        // const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
+        // const takerOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
 
-                return true;
+
+        this.doTrade(order)
+
+    }
+
+    // private logic
+    private _addOrder(order: any) {
+        const mergeOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
+        const thisOrder = order;
+        const flattened = targetOrderBook => [].concat(...targetOrderBook)
+        if (flattened(mergeOrderBook).length === 0) {
+            mergeOrderBook.push([order])
+            return;
+        }
+        for (let center = mergeOrderBook.length - 1; center >= 0; center--) {
+            const mergeOrders = mergeOrderBook[center]
+            if (mergeOrders.length === 0) {
+                mergeOrderBook.splice(center, 1)
+                continue;
+            };
+            const mergeOrder = mergeOrders[0];
+
+
+            if (mergeOrder.price === thisOrder.price) {
+
+                mergeOrders.unshift(thisOrder)
+                return;
             }
-            else if(maker.qty === taker.qty) {
-                makers.volume -= taker.qty
-
-                return true;
+            else if (thisOrder.type === "S") {
+                if (mergeOrder.price > thisOrder.price) {
+                    mergeOrderBook.splice(center + 1, 0, [thisOrder])
+                    return;
+                }
+                else if (mergeOrder.price < thisOrder.price) {
+                    if (center === 0) mergeOrderBook.unshift([thisOrder])
+                    continue;
+                }
+            }
+            else if (thisOrder.type === "B") {
+                if (mergeOrder.price < thisOrder.price) {
+                    mergeOrderBook.splice(center + 1, 0, [thisOrder])
+                    return;
+                }
+                else if (mergeOrder.price > thisOrder.price) {
+                    if (center === 0) mergeOrderBook.unshift([thisOrder])
+                    continue;
+                }
             }
             else {
-                makers.volume -= taker.qty
-                taker.qty -= maker.qty
-                
+                throw new Error("Wrong order Type")
             }
-            
         }
+
     }
-
-   
-}
-
-
-class OrderBook {
-    bidBook: BidBook = new BidBook()
-    askBook: AskBook = new AskBook()
-
-    getOrderBook() {
-        return {
-            bid: this.bidBook.getBids(),
-            ask: this.askBook.getAsks()
-        }
-    }
-}
-class BidBook {
-    bids: Bid[] = []
-
-    addBid(order: IOrder) {
-        const bid = this.bids.find(bid => bid.price === order.price)
-        if(bid === undefined){
-            this.bids.push(new Bid(order))
+    private doTrade(order: any) {
+        const makerOrderBook = order.type === "S" ? this.getBuyOrderBook() : this.getSellOrderBook();
+        const flattened = targetOrderBook => [].concat(...targetOrderBook)
+        if (flattened(makerOrderBook).length === 0) {
+            this.logger.debug("오더북 비어있음 => 추가")
+            this._addOrder(order)
             return;
         }
-        else if(bid){
-            bid.volume += order.qty;
-            bid.orders.push(order)
-        }        
-        else throw new Error("Unknown Order Bid")
+        const takerOrder = order;
+        for (let center = makerOrderBook.length - 1; center >= 0; center--) {
+            const makerOrders = makerOrderBook[center]
 
-        this.sort()
-    }
+            if (makerOrders.length === 0) {
+                makerOrderBook.splice(center, 1)
+                continue;
+            };
+            for (let index = makerOrders.length - 1; index >= 0; index--) {
 
-    sort() {
-        this.bids.sort((a, b) => b.price - a.price)
-    }
-    
-    getBids() {
-        return this.bids.map(bid => bid.getBid())
-    }
+                const makerOrder = makerOrders[index];
 
+                let buyer = order.type === "S" ? makerOrder : order
+                let seller = order.type === "S" ? order : makerOrder
+                if (buyer.price >= seller.price) {
+                    this.logger.debug("가격 충족 => 체결")
+                    if (buyer.qty < seller.qty) {
+                        this.logger.debug("buyer 수량 전체 충족 seller 수량 일부 충족")
 
-}
-class Bid {
-    volume = 0;
-    price = 0;
-    orders: IOrder[] = [];
-    constructor(order: IOrder){
-        this.price = order.price
-        this.volume = order.qty
-        this.orders.push(order)
-    }
+                        makerOrder.type === "B" ? makerOrders.splice(index, 1) : null
+                        buyer.status = "CM"
+                        this.filledOrder(buyer)
 
-    getBid() {
-        return {
-            volume: this.volume,
-            price: this.price
+                        seller.qty -= buyer.qty;
+                        this.filledOrder(seller)
+
+                        return;
+
+                    }
+                    else if (buyer.qty === seller.qty) {
+                        this.logger.debug("buyer 수량 전체 충족 seller 수량 전체 충족")
+
+                        makerOrders.splice(index, 1)
+
+                        buyer.status = "CM"
+                        seller.status = "CM"
+
+                        this.filledOrder(buyer)
+                        this.filledOrder(seller)
+
+                        return;
+                    }
+                    else if (buyer.qty > seller.qty) {
+                        this.logger.debug("buyer 수량 일부 충족 seller 수량 전체 충족")
+
+                        makerOrder.type === "S" ? makerOrders.splice(index, 1) : null
+                        seller.status = "CM"
+                        this.filledOrder(seller)
+
+                        buyer.qty -= seller.qty
+                        this.filledOrder(buyer)
+
+                        this.doTrade(buyer)
+
+                        return;
+                    }
+                    else {
+                        throw new Error("가격 조건 오류")
+                    }
+                }
+                else if (buyer.price < seller.price) {
+                    this.logger.debug("가격 미충족 => 미체결")
+                    this._addOrder(order)
+                    return;
+                }
+
+            }
         }
-    }
-    
-}
-class AskBook {
-    asks: Ask[] = []
 
-    addAsk(order: IOrder) {
-        const ask = this.asks.find(ask => ask.price === order.price)
-        if(ask === undefined){
-            this.asks.push(new Ask(order))
-            return;
-        }
-        else if(ask){
-            ask.volume += order.qty;
-            ask.orders.push(order)
-        }        
-        else throw new Error("Unknown Order Ask")
-
-        this.sort()
     }
 
-    sort() {
-        this.asks.sort((a, b) => b.price - a.price)
+    async filledOrder(order) {
+        // this.ordersQueue.add('orderComplete', order)
+        // this.Queue.add('orderComplete', order, {attempts: 5, backoff: 1000})
+        const updateOrder = order
+        updateOrder.status = 'CM'
+        await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: "CM"})
     }
 
-    getAsks() {
-        return this.asks.map(ask => ask.getAsk())
-    }
-}
-class Ask  {
-    volume = 0;
-    price = 0;
-    orders: IOrder[] = [];
-    constructor(order: IOrder){
-        this.price = order.price
-        this.volume = order.qty
-        this.orders.push(order)
-    }
+    private cancelOrder() {
 
-    getAsk() {
-        return {
-            volume: this.volume,
-            price: this.price
-        }
     }
 }
 
+
+
+interface IOrderBook {
+    bids: IBid[]
+    asks: IAsk[]
+}
+
+interface IBid {
+    volume: number;
+    price: number;
+    orders: IOrder[]    
+}
+
+interface IAsk {
+    volume: number;
+    price: number;
+    orders: IOrder[]
+}
 export interface IOrder {
     readonly id: String;
+    readonly price: Number;
     qty: number;
-    readonly price: number;
 }
 export default Trader
