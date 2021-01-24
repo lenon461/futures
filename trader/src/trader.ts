@@ -205,7 +205,9 @@ class Trader {
                         seller.qty -= buyer.qty;
                         this.filledOrder(seller)
 
-                        // this.doTrade(seller)
+                        makerOrder.type === "B" ? this.doTrade(seller) : null
+                        
+                        // this._addOrder(seller)
 
                         return;
 
@@ -233,6 +235,7 @@ class Trader {
                         buyer.qty -= seller.qty
                         this.filledOrder(buyer)
 
+                        makerOrder.type === "S" ? this.doTrade(buyer) : null
                         // this._addOrder(buyer)
 
                         return;
