@@ -4,9 +4,10 @@ import { LoggerMiddleware } from './middlewares/logger';
 import { OrdersModule } from './orders/orders.module';
 import { SummonersModule } from './summoners/summoners.module';
 import { BullModule } from '@nestjs/bull';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 @Module({
   imports: [
-    
     BullModule.forRoot({
       redis: {
         host: 'localhost',
@@ -14,7 +15,9 @@ import { BullModule } from '@nestjs/bull';
       },
     }),
      OrdersModule,
-     SummonersModule, 
+     SummonersModule,
+     AuthModule,
+     UsersModule, 
     ],
 })
 

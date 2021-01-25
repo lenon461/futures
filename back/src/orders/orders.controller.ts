@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Put, Param, Delete, Logger } from '@nestjs
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './interfaces/order.interface';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';

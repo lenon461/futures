@@ -54,8 +54,10 @@ exports.AppModule = void 0;
 const common_1 = __webpack_require__(4);
 const logger_1 = __webpack_require__(5);
 const orders_module_1 = __webpack_require__(6);
-const summoners_module_1 = __webpack_require__(19);
+const summoners_module_1 = __webpack_require__(17);
 const bull_1 = __webpack_require__(7);
+const auth_module_1 = __webpack_require__(23);
+const users_module_1 = __webpack_require__(27);
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -74,6 +76,8 @@ AppModule = __decorate([
             }),
             orders_module_1.OrdersModule,
             summoners_module_1.SummonersModule,
+            auth_module_1.AuthModule,
+            users_module_1.UsersModule,
         ],
     })
 ], AppModule);
@@ -105,7 +109,7 @@ let LoggerMiddleware = class LoggerMiddleware {
         this.logger = new common_1.Logger('HTTP');
     }
     use(request, response, next) {
-        const { ip, method, path: url } = request;
+        const { ip, method, baseUrl: url } = request;
         const userAgent = request.get('user-agent') || '';
         response.on('close', () => {
             const { statusCode } = response;
@@ -138,7 +142,7 @@ const bull_1 = __webpack_require__(7);
 const common_1 = __webpack_require__(4);
 const database_module_1 = __webpack_require__(8);
 const orders_controller_1 = __webpack_require__(11);
-const orders_provider_1 = __webpack_require__(17);
+const orders_provider_1 = __webpack_require__(15);
 const orders_service_1 = __webpack_require__(12);
 let OrdersModule = class OrdersModule {
 };
@@ -236,7 +240,7 @@ const swagger_1 = __webpack_require__(2);
 const orders_service_1 = __webpack_require__(12);
 const create_order_dto_1 = __webpack_require__(13);
 const bull_1 = __webpack_require__(7);
-const bull_2 = __webpack_require__(16);
+const bull_2 = __webpack_require__(14);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
@@ -389,21 +393,19 @@ exports.CreateOrderDto = CreateOrderDto;
 
 
 /***/ }),
-/* 14 */,
-/* 15 */,
-/* 16 */
+/* 14 */
 /***/ ((module) => {
 
 module.exports = require("bull");;
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ordersProviders = void 0;
-const order_schema_1 = __webpack_require__(18);
+const order_schema_1 = __webpack_require__(16);
 exports.ordersProviders = [
     {
         provide: 'ORDER_MODEL',
@@ -414,7 +416,7 @@ exports.ordersProviders = [
 
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -434,7 +436,7 @@ exports.OrderSchema = new mongoose.Schema({
 
 
 /***/ }),
-/* 19 */
+/* 17 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -447,9 +449,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersModule = void 0;
 const common_1 = __webpack_require__(4);
-const summoners_controller_1 = __webpack_require__(20);
-const summoners_provider_1 = __webpack_require__(23);
-const summoners_service_1 = __webpack_require__(22);
+const summoners_controller_1 = __webpack_require__(18);
+const summoners_provider_1 = __webpack_require__(21);
+const summoners_service_1 = __webpack_require__(20);
 const database_module_1 = __webpack_require__(8);
 let SummonersModule = class SummonersModule {
 };
@@ -464,7 +466,7 @@ exports.SummonersModule = SummonersModule;
 
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -485,8 +487,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersController = void 0;
 const common_1 = __webpack_require__(4);
 const swagger_1 = __webpack_require__(2);
-const create_summoner_dto_1 = __webpack_require__(21);
-const summoners_service_1 = __webpack_require__(22);
+const create_summoner_dto_1 = __webpack_require__(19);
+const summoners_service_1 = __webpack_require__(20);
 let SummonersController = SummonersController_1 = class SummonersController {
     constructor(summonersService) {
         this.summonersService = summonersService;
@@ -536,7 +538,7 @@ exports.SummonersController = SummonersController;
 
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -548,7 +550,7 @@ exports.CreateSummonerDto = CreateSummonerDto;
 
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -595,13 +597,13 @@ exports.SummonersService = SummonersService;
 
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.summonersProviders = void 0;
-const summoner_schema_1 = __webpack_require__(24);
+const summoner_schema_1 = __webpack_require__(22);
 exports.summonersProviders = [
     {
         provide: 'SUMMONER_MODEL',
@@ -612,7 +614,7 @@ exports.summonersProviders = [
 
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -629,6 +631,321 @@ exports.SummonerSchema = new mongoose.Schema({
     summonerLevel: Number,
 });
 
+
+/***/ }),
+/* 23 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthModule = void 0;
+const common_1 = __webpack_require__(4);
+const auth_service_1 = __webpack_require__(24);
+const users_module_1 = __webpack_require__(27);
+const passport_1 = __webpack_require__(29);
+const auth_controller_1 = __webpack_require__(31);
+const local_strategy_1 = __webpack_require__(33);
+let AuthModule = class AuthModule {
+};
+AuthModule = __decorate([
+    common_1.Module({
+        imports: [
+            users_module_1.UsersModule,
+            passport_1.PassportModule,
+        ],
+        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy,
+        ],
+        controllers: [auth_controller_1.AuthController],
+    })
+], AuthModule);
+exports.AuthModule = AuthModule;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+var AuthService_1, _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthService = void 0;
+const common_1 = __webpack_require__(4);
+const users_service_1 = __webpack_require__(25);
+let AuthService = AuthService_1 = class AuthService {
+    constructor(usersService) {
+        this.usersService = usersService;
+        this.logger = new common_1.Logger(AuthService_1.name);
+    }
+    async validateUser(username, pass) {
+        this.logger.debug("validateUser");
+        const user = await this.usersService.findOne(username);
+        if (user && user.password === pass) {
+            const { password } = user, result = __rest(user, ["password"]);
+            return result;
+        }
+        return null;
+    }
+};
+AuthService = AuthService_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object])
+], AuthService);
+exports.AuthService = AuthService;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UsersService = void 0;
+const common_1 = __webpack_require__(4);
+let UsersService = class UsersService {
+    constructor() {
+        this.users = [
+            {
+                userId: 1,
+                username: 'john',
+                password: 'changeme',
+            },
+            {
+                userId: 2,
+                username: 'maria',
+                password: 'guess',
+            },
+        ];
+    }
+    async findOne(username) {
+        return this.users.find(user => user.username === username);
+    }
+};
+UsersService = __decorate([
+    common_1.Injectable()
+], UsersService);
+exports.UsersService = UsersService;
+
+
+/***/ }),
+/* 26 */,
+/* 27 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UsersModule = void 0;
+const common_1 = __webpack_require__(4);
+const users_service_1 = __webpack_require__(25);
+const users_controller_1 = __webpack_require__(28);
+let UsersModule = class UsersModule {
+};
+UsersModule = __decorate([
+    common_1.Module({
+        providers: [users_service_1.UsersService],
+        exports: [users_service_1.UsersService],
+        controllers: [users_controller_1.UsersController]
+    })
+], UsersModule);
+exports.UsersModule = UsersModule;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UsersController = void 0;
+const common_1 = __webpack_require__(4);
+let UsersController = class UsersController {
+};
+UsersController = __decorate([
+    common_1.Controller('users')
+], UsersController);
+exports.UsersController = UsersController;
+
+
+/***/ }),
+/* 29 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/passport");;
+
+/***/ }),
+/* 30 */,
+/* 31 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var AuthController_1, _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthController = void 0;
+const common_1 = __webpack_require__(4);
+const auth_service_1 = __webpack_require__(24);
+const local_auth_guard_1 = __webpack_require__(32);
+let AuthController = AuthController_1 = class AuthController {
+    constructor(authService) {
+        this.authService = authService;
+        this.logger = new common_1.Logger(AuthController_1.name);
+    }
+    async login(req) {
+        console.log(req.user);
+        return req.user;
+    }
+    async login2(req) {
+        console.log("THIS IS LOGIN 222");
+        return req.user;
+    }
+};
+__decorate([
+    common_1.UseGuards(local_auth_guard_1.LocalAuthGuard),
+    common_1.Post('login'),
+    __param(0, common_1.Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
+__decorate([
+    common_1.Post('login2'),
+    __param(0, common_1.Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login2", null);
+AuthController = AuthController_1 = __decorate([
+    common_1.Controller('auth'),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
+], AuthController);
+exports.AuthController = AuthController;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LocalAuthGuard = void 0;
+const common_1 = __webpack_require__(4);
+const passport_1 = __webpack_require__(29);
+let LocalAuthGuard = class LocalAuthGuard extends passport_1.AuthGuard('local') {
+};
+LocalAuthGuard = __decorate([
+    common_1.Injectable()
+], LocalAuthGuard);
+exports.LocalAuthGuard = LocalAuthGuard;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var LocalStrategy_1, _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LocalStrategy = void 0;
+const passport_local_1 = __webpack_require__(34);
+const passport_1 = __webpack_require__(29);
+const common_1 = __webpack_require__(4);
+const auth_service_1 = __webpack_require__(24);
+let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy) {
+    constructor(authService) {
+        super();
+        this.authService = authService;
+        this.logger = new common_1.Logger(LocalStrategy_1.name);
+    }
+    async validate(username, password) {
+        this.logger.debug("localstartegy validate");
+        const user = await this.authService.validateUser(username, password);
+        if (!user) {
+            throw new common_1.UnauthorizedException();
+        }
+        return user;
+    }
+};
+LocalStrategy = LocalStrategy_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
+], LocalStrategy);
+exports.LocalStrategy = LocalStrategy;
+
+
+/***/ }),
+/* 34 */
+/***/ ((module) => {
+
+module.exports = require("passport-local");;
 
 /***/ })
 /******/ 	]);
