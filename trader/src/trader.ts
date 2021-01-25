@@ -1,5 +1,5 @@
 import { publisher } from './Pub';
-import _ from 'lodash'
+import _, { findIndex } from 'lodash'
 import MODEL from './database'
 import Queue from 'bull'
 import { ProxyAuthenticationRequired } from 'http-errors';
@@ -58,6 +58,13 @@ class Trader {
         this.Queue.process(this.MKNAME, (job, done) => {
             console.log(this.MKNAME + " process", job.data.price, job.data.qty)
             this.addOrder(job.data)
+
+            done();
+        })
+        
+        this.Queue.process(this.MKNAME + 'Cancel', (job, done) => {
+            console.log(this.MKNAME + " cancel process", job.data._id)
+            this.cancelOrder(job.data)
 
             done();
         })
@@ -206,8 +213,6 @@ class Trader {
                         this.filledOrder(seller)
 
                         makerOrder.type === "B" ? this.doTrade(seller) : null
-                        
-                        // this._addOrder(seller)
 
                         return;
 
@@ -236,7 +241,6 @@ class Trader {
                         this.filledOrder(buyer)
 
                         makerOrder.type === "S" ? this.doTrade(buyer) : null
-                        // this._addOrder(buyer)
 
                         return;
                     }
@@ -261,8 +265,17 @@ class Trader {
         await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: order.status, qty: order.qty}, {useFindAndModify: false})
     }
 
-    private cancelOrder() {
-
+    private async cancelOrder(order) {
+        const makerOrderBook = order.type === "S" ? this.getSellOrderBook() : this.getBuyOrderBook();
+        for (const line of makerOrderBook) {
+            // document 와 api body 에 _id 가 타입이 다름.
+            const makerIndex = line.findIndex(maker => maker._id == order._id)
+            if(makerIndex !== -1) {
+                line.splice(makerIndex, 1)
+                await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: 'CC'}, {useFindAndModify: false})
+                break;
+            }
+        };
     }
 }
 

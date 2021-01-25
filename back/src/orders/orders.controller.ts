@@ -15,10 +15,17 @@ export class OrdersController {
   @ApiOperation({summary: 'Create Order'})
   @ApiResponse({status: 201, description: 'Created'})
   async postOrder(@Body() createOrderDto: CreateOrderDto) {
+    createOrderDto.total_qty = createOrderDto.qty
     const order = await this.ordersService.create(createOrderDto);
     this.logger.debug(createOrderDto.marketId.toString())
     this.orderQueue.add(createOrderDto.marketId.toString(), order, {attempts: 5, backoff: 1000})
     return order
+  }
+
+  @Delete('')
+  async cancelOrder(@Body() cancelOrderDto: any) {
+    this.orderQueue.add(cancelOrderDto.marketId.toString() + "Cancel", cancelOrderDto, {attempts: 5, backoff: 1000})
+    return 'success'
   }
 
   @Get()
@@ -33,13 +40,9 @@ export class OrdersController {
       return orders
   }
 
-  @Put(':id')
-  async putOrderOne(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.updateOne(id, updateOrderDto);
+  @Delete('all/:id')
+  async deleteOrderAll(@Param('id') memberId: string) {
+    return this.ordersService.deleteAll(memberId);
   }
 
-  @Delete(':id')
-  async deleteOrderAll(@Param('id') id: string) {
-    return this.ordersService.deleteAll(id);
-  }
 }

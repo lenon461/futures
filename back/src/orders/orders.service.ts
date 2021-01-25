@@ -13,6 +13,11 @@ export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
+    const defaultOrderProperty = {
+      total_qty: createOrderDto.qty,
+      time: new Date().getTime(),
+      status: "GO"
+    }
     const createdOrder = new this.orderModel(createOrderDto);
     const order = await createdOrder.save();
     return order
@@ -27,11 +32,17 @@ export class OrdersService {
     return order
   }
 
-  async updateOne(id: string, updateOrderDto: UpdateOrderDto) {
-    const result =  await this.orderModel.updateOne({id}, updateOrderDto).exec();
+  async cancelOne(_id: string) {
+    const result =  await this.orderModel.updateOne({_id}, {status: 'CC'}).exec();
+    return result;
   }
 
-  async deleteAll(id) {
+  async deleteAll(memberId) {
+    const result = await this.orderModel.deleteMany({memberId})
+    return result
+  }
+
+  async deleteOne(id) {
     const result = await this.orderModel.deleteMany({id})
     return result
   }
