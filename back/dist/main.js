@@ -748,11 +748,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var UsersService_1;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersService = void 0;
 const common_1 = __webpack_require__(4);
-let UsersService = class UsersService {
+let UsersService = UsersService_1 = class UsersService {
     constructor() {
+        this.logger = new common_1.Logger(UsersService_1.name);
         this.users = [
             {
                 userId: 1,
@@ -767,10 +769,11 @@ let UsersService = class UsersService {
         ];
     }
     async findOne(username) {
+        this.logger.debug("findOne");
         return this.users.find(user => user.username === username);
     }
 };
-UsersService = __decorate([
+UsersService = UsersService_1 = __decorate([
     common_1.Injectable()
 ], UsersService);
 exports.UsersService = UsersService;
@@ -821,13 +824,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var UsersController_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersController = void 0;
 const common_1 = __webpack_require__(4);
-let UsersController = class UsersController {
+const jwt_auth_guard_1 = __webpack_require__(32);
+const users_service_1 = __webpack_require__(25);
+let UsersController = UsersController_1 = class UsersController {
+    constructor(usersService) {
+        this.usersService = usersService;
+        this.logger = new common_1.Logger(UsersController_1.name);
+    }
+    getProfile(req) {
+        this.logger.debug("getProfile");
+        return req.user;
+    }
 };
-UsersController = __decorate([
-    common_1.Controller('users')
+__decorate([
+    common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
+    common_1.Get('profile'),
+    __param(0, common_1.Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getProfile", null);
+UsersController = UsersController_1 = __decorate([
+    common_1.Controller('users'),
+    __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object])
 ], UsersController);
 exports.UsersController = UsersController;
 
@@ -884,6 +913,7 @@ let AuthController = AuthController_1 = class AuthController {
         return this.authService.login(req.user);
     }
     getProfile(req) {
+        this.logger.debug("getProfile");
         return req.user;
     }
     test(req) {

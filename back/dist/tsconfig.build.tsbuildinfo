@@ -1847,8 +1847,8 @@
         "affectsGlobalScope": false
       },
       "../src/users/users.service.ts": {
-        "version": "b904c1f8b8d1290b41981d6bdbaf3a7b40a38d96e79279713b809e0c17417e78",
-        "signature": "93590a1e75b993613b0c3c5fb1f9b1b054a126f2eb990b7e405af6dd4a3aaf66",
+        "version": "3c0b5f8aa378c465ea8df5e75f1d6d5c86d605289c4a9feff0770dc1b8bdb818",
+        "signature": "77e0ce5f1ede6d0a9706f349f8cc0ecff144f36c3a68ce29ce27e91c643d2d31",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/jsonwebtoken/index.d.ts": {
@@ -1889,16 +1889,6 @@
       "../src/auth/auth.service.ts": {
         "version": "d66fc75a94f6bc4e6a93815997c539e7350b0e1a8d2fa29b4708def9640ab0cc",
         "signature": "683bf4dbf83d87dad17ca83fd4071430ba59fb53f858bb1a97e3e51148846fd2",
-        "affectsGlobalScope": false
-      },
-      "../src/users/users.controller.ts": {
-        "version": "74acc1ec1681785a8290d87f5ed943996c75f0d7550f1dfc0784343cacfa9c57",
-        "signature": "68b1674efd9a07feb7e7ef0cc770778f05bcc09a86c7a8bd4d6faa72804fe229",
-        "affectsGlobalScope": false
-      },
-      "../src/users/users.module.ts": {
-        "version": "a63d0bc66c4ddda2c63e88cb7e98513d43735987f4f0fc0d790e54657921c901",
-        "signature": "12dec6c99bd8d11167fa91a31e737abbbf8c9cc789c151a25a9a1d13f328175c",
         "affectsGlobalScope": false
       },
       "../node_modules/@nestjs/passport/dist/abstract.strategy.d.ts": {
@@ -1956,6 +1946,21 @@
         "signature": "8f1241f5d9f0d3d72117768b3c974e462840fbd85026fb66685078945404cf2f",
         "affectsGlobalScope": false
       },
+      "../src/auth/guards/jwt-auth.guard.ts": {
+        "version": "6fe438f3c524dbdf1c458ea3c638d6c16385883fac8cd53bc9ff05ef723d68cb",
+        "signature": "a7a8ca0beaf7d258d26820eae9df689e130d86205d178a607d3c56f1c72d9deb",
+        "affectsGlobalScope": false
+      },
+      "../src/users/users.controller.ts": {
+        "version": "5b181449567e193dd8c729910f0e273efbdb1d6c2efcc7e17e7de6c279adf2a2",
+        "signature": "f3a0b7839ca1996d4e8478be08a2c1da446b98834d85ea7415d590dc4d8bc7e4",
+        "affectsGlobalScope": false
+      },
+      "../src/users/users.module.ts": {
+        "version": "a63d0bc66c4ddda2c63e88cb7e98513d43735987f4f0fc0d790e54657921c901",
+        "signature": "12dec6c99bd8d11167fa91a31e737abbbf8c9cc789c151a25a9a1d13f328175c",
+        "affectsGlobalScope": false
+      },
       "../src/auth/constants.ts": {
         "version": "067cdc3d074c5fe5b9b3dce3926f84bafd4f4c8fa5b8084b950891201de8ad8b",
         "signature": "541603c0913bf3791cdca6f10c3bcd0042e5858974e191e345bfecb3523124fb",
@@ -1966,18 +1971,13 @@
         "signature": "de00899ee8403ca6d4ac89938059031acd4e52dd417186b11c3803fd1e2247ba",
         "affectsGlobalScope": false
       },
-      "../src/auth/guards/jwt-auth.guard.ts": {
-        "version": "6fe438f3c524dbdf1c458ea3c638d6c16385883fac8cd53bc9ff05ef723d68cb",
-        "signature": "a7a8ca0beaf7d258d26820eae9df689e130d86205d178a607d3c56f1c72d9deb",
-        "affectsGlobalScope": false
-      },
       "../src/auth/guards/open-api-auth.guard.ts": {
         "version": "f3ef2a580af0aa675a131722ab1a311589d97a89687f6b8c8c6e352a890667f1",
         "signature": "839b371fe5c84ba717b96930aff04ead31c93076eeec32dec6c331630305fbbb",
         "affectsGlobalScope": false
       },
       "../src/auth/auth.controller.ts": {
-        "version": "dd460a79457d204a8e2481210c0dd10d7eafebf98ccf63bc3be5563f9e57303f",
+        "version": "936af3baffa3ed5847ced771bd383c05e20dda80c993368ae63b4af602dc0b8a",
         "signature": "56c269ebeece2e959898034ef22915fa39742fb69aa04b5a61e85c92fd901886",
         "affectsGlobalScope": false
       },
@@ -4608,7 +4608,9 @@
         "../src/summoners/interfaces/summoner.interface.ts"
       ],
       "../src/users/users.controller.ts": [
-        "../node_modules/@nestjs/common/index.d.ts"
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../src/auth/guards/jwt-auth.guard.ts",
+        "../src/users/users.service.ts"
       ],
       "../src/users/users.module.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
@@ -6495,6 +6497,9 @@
         "../node_modules/@types/mongoose/index.d.ts",
         "../src/summoners/dto/create-summoner.dto.ts",
         "../src/summoners/interfaces/summoner.interface.ts"
+      ],
+      "../src/users/users.controller.ts": [
+        "../src/users/users.service.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -7034,7 +7039,19 @@
         0
       ],
       [
+        "../src/auth/auth.controller.ts",
+        0
+      ],
+      [
         "../src/auth/auth.module.ts",
+        0
+      ],
+      [
+        "../src/auth/strategies/local.strategy.ts",
+        0
+      ],
+      [
+        "../src/auth/strategies/open-api.strategy.ts",
         0
       ],
       [
