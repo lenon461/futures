@@ -649,8 +649,12 @@ const common_1 = __webpack_require__(4);
 const auth_service_1 = __webpack_require__(24);
 const users_module_1 = __webpack_require__(27);
 const passport_1 = __webpack_require__(29);
+const jwt_1 = __webpack_require__(26);
+const constants_1 = __webpack_require__(30);
 const auth_controller_1 = __webpack_require__(31);
-const local_strategy_1 = __webpack_require__(33);
+const local_strategy_1 = __webpack_require__(35);
+const jwt_strategy_1 = __webpack_require__(37);
+const open_api_strategy_1 = __webpack_require__(39);
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -658,9 +662,12 @@ AuthModule = __decorate([
         imports: [
             users_module_1.UsersModule,
             passport_1.PassportModule,
+            jwt_1.JwtModule.register({
+                secret: constants_1.jwtConstants.secret,
+                signOptions: { expiresIn: '2400s' },
+            })
         ],
-        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy,
-        ],
+        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy, open_api_strategy_1.OpenApiStrategy],
         controllers: [auth_controller_1.AuthController],
     })
 ], AuthModule);
@@ -692,18 +699,21 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var AuthService_1, _a;
+var AuthService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthService = void 0;
 const common_1 = __webpack_require__(4);
 const users_service_1 = __webpack_require__(25);
+const jwt_1 = __webpack_require__(26);
 let AuthService = AuthService_1 = class AuthService {
-    constructor(usersService) {
+    constructor(usersService, jwtService) {
         this.usersService = usersService;
+        this.jwtService = jwtService;
         this.logger = new common_1.Logger(AuthService_1.name);
     }
     async validateUser(username, pass) {
         this.logger.debug("validateUser");
+        this.logger.debug(username + pass);
         const user = await this.usersService.findOne(username);
         if (user && user.password === pass) {
             const { password } = user, result = __rest(user, ["password"]);
@@ -711,10 +721,18 @@ let AuthService = AuthService_1 = class AuthService {
         }
         return null;
     }
+    async login(user) {
+        this.logger.debug("login");
+        this.logger.debug(user);
+        const payload = { username: user.username, sub: user.userId };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
+    }
 };
 AuthService = AuthService_1 = __decorate([
     common_1.Injectable(),
-    __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object])
 ], AuthService);
 exports.AuthService = AuthService;
 
@@ -759,7 +777,12 @@ exports.UsersService = UsersService;
 
 
 /***/ }),
-/* 26 */,
+/* 26 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/jwt");;
+
+/***/ }),
 /* 27 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -816,7 +839,18 @@ exports.UsersController = UsersController;
 module.exports = require("@nestjs/passport");;
 
 /***/ }),
-/* 30 */,
+/* 30 */
+/***/ ((__unused_webpack_module, exports) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.jwtConstants = void 0;
+exports.jwtConstants = {
+    secret: 'secretKey',
+};
+
+
+/***/ }),
 /* 31 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -838,19 +872,22 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthController = void 0;
 const common_1 = __webpack_require__(4);
 const auth_service_1 = __webpack_require__(24);
-const local_auth_guard_1 = __webpack_require__(32);
+const local_auth_guard_1 = __webpack_require__(33);
+const jwt_auth_guard_1 = __webpack_require__(32);
+const open_api_auth_guard_1 = __webpack_require__(38);
 let AuthController = AuthController_1 = class AuthController {
     constructor(authService) {
         this.authService = authService;
         this.logger = new common_1.Logger(AuthController_1.name);
     }
     async login(req) {
-        console.log(req.user);
+        return this.authService.login(req.user);
+    }
+    getProfile(req) {
         return req.user;
     }
-    async login2(req) {
-        console.log("THIS IS LOGIN 222");
-        return req.user;
+    test(req) {
+        return "success";
     }
 };
 __decorate([
@@ -862,12 +899,21 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
-    common_1.Post('login2'),
+    common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
+    common_1.Get('profile'),
     __param(0, common_1.Request()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "login2", null);
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "getProfile", null);
+__decorate([
+    common_1.UseGuards(open_api_auth_guard_1.OpenApiAuthGuard),
+    common_1.Get('openapi'),
+    __param(0, common_1.Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "test", null);
 AuthController = AuthController_1 = __decorate([
     common_1.Controller('auth'),
     __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
@@ -877,6 +923,47 @@ exports.AuthController = AuthController;
 
 /***/ }),
 /* 32 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var JwtAuthGuard_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JwtAuthGuard = void 0;
+const common_1 = __webpack_require__(4);
+const passport_1 = __webpack_require__(29);
+let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends passport_1.AuthGuard('jwt') {
+    constructor() {
+        super(...arguments);
+        this.logger = new common_1.Logger(JwtAuthGuard_1.name);
+    }
+    canActivate(context) {
+        return super.canActivate(context);
+    }
+    handleRequest(err, user, info) {
+        this.logger.debug("handleRequest");
+        this.logger.debug(err);
+        this.logger.debug(user);
+        this.logger.debug(info);
+        if (err || !user) {
+            throw err || new common_1.UnauthorizedException();
+        }
+        return user;
+    }
+};
+JwtAuthGuard = JwtAuthGuard_1 = __decorate([
+    common_1.Injectable()
+], JwtAuthGuard);
+exports.JwtAuthGuard = JwtAuthGuard;
+
+
+/***/ }),
+/* 33 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -899,7 +986,13 @@ exports.LocalAuthGuard = LocalAuthGuard;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
+/***/ ((module) => {
+
+module.exports = require("passport-local");;
+
+/***/ }),
+/* 35 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -942,10 +1035,125 @@ exports.LocalStrategy = LocalStrategy;
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ ((module) => {
 
-module.exports = require("passport-local");;
+module.exports = require("passport-jwt");;
+
+/***/ }),
+/* 37 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var JwtStrategy_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JwtStrategy = void 0;
+const passport_jwt_1 = __webpack_require__(36);
+const passport_1 = __webpack_require__(29);
+const common_1 = __webpack_require__(4);
+const constants_1 = __webpack_require__(30);
+let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportStrategy(passport_jwt_1.Strategy) {
+    constructor() {
+        super({
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
+            secretOrKey: constants_1.jwtConstants.secret,
+        });
+        this.logger = new common_1.Logger(JwtStrategy_1.name);
+    }
+    async validate(payload) {
+        this.logger.debug("JwtStrategy validate");
+        this.logger.debug(payload);
+        return { userId: payload.sub, username: payload.username };
+    }
+};
+JwtStrategy = JwtStrategy_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [])
+], JwtStrategy);
+exports.JwtStrategy = JwtStrategy;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var OpenApiAuthGuard_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OpenApiAuthGuard = void 0;
+const common_1 = __webpack_require__(4);
+let OpenApiAuthGuard = OpenApiAuthGuard_1 = class OpenApiAuthGuard {
+    constructor() {
+        this.logger = new common_1.Logger(OpenApiAuthGuard_1.name);
+    }
+    canActivate(context) {
+        const request = context.switchToHttp().getRequest();
+        this.logger.debug("canActivate");
+        this.logger.debug(request.headers);
+        return true;
+    }
+};
+OpenApiAuthGuard = OpenApiAuthGuard_1 = __decorate([
+    common_1.Injectable()
+], OpenApiAuthGuard);
+exports.OpenApiAuthGuard = OpenApiAuthGuard;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var OpenApiStrategy_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.OpenApiStrategy = void 0;
+const passport_local_1 = __webpack_require__(34);
+const passport_1 = __webpack_require__(29);
+const common_1 = __webpack_require__(4);
+let OpenApiStrategy = OpenApiStrategy_1 = class OpenApiStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy, 'openapi') {
+    constructor() {
+        super({
+            "test": "test"
+        });
+        this.logger = new common_1.Logger(OpenApiStrategy_1.name);
+    }
+    async validate(...args) {
+        this.logger.debug("OpenApiStrategy validate");
+        this.logger.debug(args);
+        return true;
+    }
+};
+OpenApiStrategy = OpenApiStrategy_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [])
+], OpenApiStrategy);
+exports.OpenApiStrategy = OpenApiStrategy;
+
 
 /***/ })
 /******/ 	]);

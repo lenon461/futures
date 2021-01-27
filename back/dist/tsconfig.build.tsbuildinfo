@@ -1887,8 +1887,8 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.service.ts": {
-        "version": "7742baa54b8df95172fd3bad4e38e5177bf63836082095a24a3334b9507f8fc8",
-        "signature": "67eb7d0611d1a01d941d9ee5d4c7e56c35ce3231a9bb9da8d199a8c141392172",
+        "version": "d66fc75a94f6bc4e6a93815997c539e7350b0e1a8d2fa29b4708def9640ab0cc",
+        "signature": "683bf4dbf83d87dad17ca83fd4071430ba59fb53f858bb1a97e3e51148846fd2",
         "affectsGlobalScope": false
       },
       "../src/users/users.controller.ts": {
@@ -1961,14 +1961,24 @@
         "signature": "541603c0913bf3791cdca6f10c3bcd0042e5858974e191e345bfecb3523124fb",
         "affectsGlobalScope": false
       },
-      "../src/auth/local-auth.guard.ts": {
+      "../src/auth/guards/local-auth.guard.ts": {
         "version": "7e2fac88dfeae41bb3fc9238e1e41370da76b30f239a458bd42e780b70919a59",
         "signature": "de00899ee8403ca6d4ac89938059031acd4e52dd417186b11c3803fd1e2247ba",
         "affectsGlobalScope": false
       },
+      "../src/auth/guards/jwt-auth.guard.ts": {
+        "version": "6fe438f3c524dbdf1c458ea3c638d6c16385883fac8cd53bc9ff05ef723d68cb",
+        "signature": "a7a8ca0beaf7d258d26820eae9df689e130d86205d178a607d3c56f1c72d9deb",
+        "affectsGlobalScope": false
+      },
+      "../src/auth/guards/open-api-auth.guard.ts": {
+        "version": "f3ef2a580af0aa675a131722ab1a311589d97a89687f6b8c8c6e352a890667f1",
+        "signature": "839b371fe5c84ba717b96930aff04ead31c93076eeec32dec6c331630305fbbb",
+        "affectsGlobalScope": false
+      },
       "../src/auth/auth.controller.ts": {
-        "version": "d20f1e8b688e3903b98dcfa896b7a56db866ee147d51ffb830c050723291717f",
-        "signature": "776aaf1fb180ed3e1e39671085ff9ab05005e251253bfdbaf4c879b8f2be15de",
+        "version": "dd460a79457d204a8e2481210c0dd10d7eafebf98ccf63bc3be5563f9e57303f",
+        "signature": "56c269ebeece2e959898034ef22915fa39742fb69aa04b5a61e85c92fd901886",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/passport-strategy/index.d.ts": {
@@ -1981,9 +1991,9 @@
         "signature": "e50f9ae34bb92232533e3a32848970dd04f874a8f64d3ae48980e062b6489f26",
         "affectsGlobalScope": false
       },
-      "../src/auth/local.strategy.ts": {
-        "version": "6808cc4c493842fedad6d2e8e9cba9f63280ed43c3b1879b887dd2f883e497e3",
-        "signature": "b88f935a1381c9f1c1b5dc269a0beb8ceb0a28c655c6612be8495c22fa4d5987",
+      "../src/auth/strategies/local.strategy.ts": {
+        "version": "4941e3e034883ecc5247a8b3e607f54730d18a41378d646563fb9ea2046c2012",
+        "signature": "bc0d85e0dd66b41a1ef0336fef7405fe867888961850502ff9d127230ff55f15",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/passport-jwt/index.d.ts": {
@@ -1991,13 +2001,18 @@
         "signature": "d306be26f96b4bd9b279cd7da9d1355d5ce4060a2bb254489c1b95c87057eb38",
         "affectsGlobalScope": false
       },
-      "../src/auth/jwt.strategy.ts": {
-        "version": "1ee51ea8295a2d6befd70d48c6466a6604c900e8bd26ea70f640e31001f81094",
-        "signature": "18d9ac8a67b224cc5f7041cd0ede04da455b2b03d7a1c3aa9976475744e3df94",
+      "../src/auth/strategies/jwt.strategy.ts": {
+        "version": "8ed4a7246c14e2ae73d304701805e1ff263830d6edd3faefd62fea763c476a67",
+        "signature": "8c5384223b5a5f45e32c1c53947fb24d9f14feaa16cf76b08077f992ca27b834",
+        "affectsGlobalScope": false
+      },
+      "../src/auth/strategies/open-api.strategy.ts": {
+        "version": "19a8969ba5802ce5d81ae910c89f69af87898b45358858586a3d65beaab88acd",
+        "signature": "6d673bfb342f4e865095c5d476ef9a7e8d88fa275fe85efc0ba1908bbe689307",
         "affectsGlobalScope": false
       },
       "../src/auth/auth.module.ts": {
-        "version": "ae084c8bf2c8b0f1520b062bc0ba2a50c335c46b1259c6cddb4702647dec7ae8",
+        "version": "7a6622a45e3209d4e17aa457c673a49b931d1e1f65a8e6360dc162ac87b08adc",
         "signature": "2e5d258cf85349b02b015c3f1b8873c152d182c3819a7ccc3aff16fc3037a5fc",
         "affectsGlobalScope": false
       },
@@ -4451,7 +4466,9 @@
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/passport/index.d.ts",
         "../src/auth/auth.service.ts",
-        "../src/auth/local-auth.guard.ts"
+        "../src/auth/guards/jwt-auth.guard.ts",
+        "../src/auth/guards/local-auth.guard.ts",
+        "../src/auth/guards/open-api-auth.guard.ts"
       ],
       "../src/auth/auth.module.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
@@ -4460,8 +4477,9 @@
         "../src/auth/auth.controller.ts",
         "../src/auth/auth.service.ts",
         "../src/auth/constants.ts",
-        "../src/auth/jwt.strategy.ts",
-        "../src/auth/local.strategy.ts",
+        "../src/auth/strategies/jwt.strategy.ts",
+        "../src/auth/strategies/local.strategy.ts",
+        "../src/auth/strategies/open-api.strategy.ts",
         "../src/users/users.module.ts"
       ],
       "../src/auth/auth.service.ts": [
@@ -4469,17 +4487,31 @@
         "../node_modules/@nestjs/jwt/index.d.ts",
         "../src/users/users.service.ts"
       ],
-      "../src/auth/jwt.strategy.ts": [
+      "../src/auth/guards/jwt-auth.guard.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/passport/index.d.ts"
+      ],
+      "../src/auth/guards/local-auth.guard.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/passport/index.d.ts"
+      ],
+      "../src/auth/guards/open-api-auth.guard.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/rxjs/index.d.ts"
+      ],
+      "../src/auth/strategies/jwt.strategy.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/passport/index.d.ts",
         "../node_modules/@types/passport-jwt/index.d.ts",
         "../src/auth/constants.ts"
       ],
-      "../src/auth/local-auth.guard.ts": [
+      "../src/auth/strategies/local.strategy.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
-        "../node_modules/@nestjs/passport/index.d.ts"
+        "../node_modules/@nestjs/passport/index.d.ts",
+        "../node_modules/@types/passport-local/index.d.ts",
+        "../src/auth/auth.service.ts"
       ],
-      "../src/auth/local.strategy.ts": [
+      "../src/auth/strategies/open-api.strategy.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../node_modules/@nestjs/passport/index.d.ts",
         "../node_modules/@types/passport-local/index.d.ts",
@@ -6385,17 +6417,30 @@
         "../src/auth/auth.service.ts"
       ],
       "../src/auth/auth.service.ts": [
+        "../node_modules/@nestjs/jwt/index.d.ts",
         "../src/users/users.service.ts"
       ],
-      "../src/auth/jwt.strategy.ts": [
-        "../node_modules/@types/passport-jwt/index.d.ts"
+      "../src/auth/guards/jwt-auth.guard.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@nestjs/passport/index.d.ts",
+        "../node_modules/rxjs/index.d.ts"
       ],
-      "../src/auth/local-auth.guard.ts": [
+      "../src/auth/guards/local-auth.guard.ts": [
         "../node_modules/@nestjs/passport/index.d.ts"
       ],
-      "../src/auth/local.strategy.ts": [
+      "../src/auth/guards/open-api-auth.guard.ts": [
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/rxjs/index.d.ts"
+      ],
+      "../src/auth/strategies/jwt.strategy.ts": [
+        "../node_modules/@types/passport-jwt/index.d.ts"
+      ],
+      "../src/auth/strategies/local.strategy.ts": [
         "../node_modules/@types/passport-local/index.d.ts",
         "../src/auth/auth.service.ts"
+      ],
+      "../src/auth/strategies/open-api.strategy.ts": [
+        "../node_modules/@types/passport-local/index.d.ts"
       ],
       "../src/database/database.providers.ts": [
         "../node_modules/@types/mongoose/index.d.ts"
@@ -6950,9 +6995,12 @@
       "../src/auth/auth.module.ts",
       "../src/auth/auth.service.ts",
       "../src/auth/constants.ts",
-      "../src/auth/jwt.strategy.ts",
-      "../src/auth/local-auth.guard.ts",
-      "../src/auth/local.strategy.ts",
+      "../src/auth/guards/jwt-auth.guard.ts",
+      "../src/auth/guards/local-auth.guard.ts",
+      "../src/auth/guards/open-api-auth.guard.ts",
+      "../src/auth/strategies/jwt.strategy.ts",
+      "../src/auth/strategies/local.strategy.ts",
+      "../src/auth/strategies/open-api.strategy.ts",
       "../src/database/database.module.ts",
       "../src/database/database.providers.ts",
       "../src/main.ts",
