@@ -15,7 +15,7 @@ import { OpenApiStrategy } from './strategies/open-api.strategy';
     PassportModule, 
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '2400s' },
+      signOptions: { expiresIn: '36000s' },
     })
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, OpenApiStrategy],

@@ -13,8 +13,6 @@ export class OpenApiStrategy extends PassportStrategy(Strategy, 'openapi') {
   private readonly logger = new Logger(OpenApiStrategy.name);
 
   async validate(...args): Promise<any> {
-    this.logger.debug("OpenApiStrategy validate")
-    this.logger.debug(args)
     return true;
   }
 }

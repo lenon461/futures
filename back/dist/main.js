@@ -664,7 +664,7 @@ AuthModule = __decorate([
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
                 secret: constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: '2400s' },
+                signOptions: { expiresIn: '36000s' },
             })
         ],
         providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy, open_api_strategy_1.OpenApiStrategy],
@@ -688,17 +688,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var AuthService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthService = void 0;
@@ -711,20 +700,20 @@ let AuthService = AuthService_1 = class AuthService {
         this.jwtService = jwtService;
         this.logger = new common_1.Logger(AuthService_1.name);
     }
-    async validateUser(username, pass) {
-        this.logger.debug("validateUser");
-        this.logger.debug(username + pass);
-        const user = await this.usersService.findOne(username);
-        if (user && user.password === pass) {
-            const { password } = user, result = __rest(user, ["password"]);
-            return result;
+    async validateUser(id, passwd) {
+        const user = await this.usersService.readOne(id);
+        if (user && user.passwd === passwd) {
+            const { _id, id, name, passwd } = user;
+            return { _id, id, name, };
         }
         return null;
     }
     async login(user) {
-        this.logger.debug("login");
-        this.logger.debug(user);
-        const payload = { username: user.username, sub: user.userId };
+        const payload = {
+            _id: user._id,
+            id: user.id,
+            name: user.name,
+        };
         return {
             access_token: this.jwtService.sign(payload),
         };
@@ -748,33 +737,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var UsersService_1;
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var UsersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersService = void 0;
 const common_1 = __webpack_require__(4);
+const mongoose_1 = __webpack_require__(10);
 let UsersService = UsersService_1 = class UsersService {
-    constructor() {
+    constructor(userModel) {
+        this.userModel = userModel;
         this.logger = new common_1.Logger(UsersService_1.name);
-        this.users = [
-            {
-                userId: 1,
-                username: 'john',
-                password: 'changeme',
-            },
-            {
-                userId: 2,
-                username: 'maria',
-                password: 'guess',
-            },
-        ];
     }
-    async findOne(username) {
-        this.logger.debug("findOne");
-        return this.users.find(user => user.username === username);
+    async readOne(id) {
+        this.logger.debug("readOne");
+        return this.userModel.findOne({ id }).exec();
+    }
+    async create(createUserDto) {
+        const createdUser = new this.userModel(createUserDto);
+        const user = await createdUser.save();
+        return user;
     }
 };
 UsersService = UsersService_1 = __decorate([
-    common_1.Injectable()
+    common_1.Injectable(),
+    __param(0, common_1.Inject('USER_MODEL')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _a : Object])
 ], UsersService);
 exports.UsersService = UsersService;
 
@@ -801,13 +793,16 @@ exports.UsersModule = void 0;
 const common_1 = __webpack_require__(4);
 const users_service_1 = __webpack_require__(25);
 const users_controller_1 = __webpack_require__(28);
+const database_module_1 = __webpack_require__(8);
+const users_provider_1 = __webpack_require__(40);
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     common_1.Module({
-        providers: [users_service_1.UsersService],
+        imports: [database_module_1.DatabaseModule],
+        controllers: [users_controller_1.UsersController],
+        providers: [users_service_1.UsersService, ...users_provider_1.usersProviders],
         exports: [users_service_1.UsersService],
-        controllers: [users_controller_1.UsersController]
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;
@@ -842,8 +837,10 @@ let UsersController = UsersController_1 = class UsersController {
         this.logger = new common_1.Logger(UsersController_1.name);
     }
     getProfile(req) {
-        this.logger.debug("getProfile");
-        return req.user;
+        return this.usersService.readOne(req.user.id);
+    }
+    async signUp(CreateUserDto) {
+        return this.usersService.create(CreateUserDto);
     }
 };
 __decorate([
@@ -854,6 +851,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getProfile", null);
+__decorate([
+    common_1.Post(''),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "signUp", null);
 UsersController = UsersController_1 = __decorate([
     common_1.Controller('users'),
     __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object])
@@ -976,10 +980,6 @@ let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends passport_1.AuthGu
         return super.canActivate(context);
     }
     handleRequest(err, user, info) {
-        this.logger.debug("handleRequest");
-        this.logger.debug(err);
-        this.logger.debug(user);
-        this.logger.debug(info);
         if (err || !user) {
             throw err || new common_1.UnauthorizedException();
         }
@@ -1003,14 +1003,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var LocalAuthGuard_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LocalAuthGuard = void 0;
-const common_1 = __webpack_require__(4);
 const passport_1 = __webpack_require__(29);
-let LocalAuthGuard = class LocalAuthGuard extends passport_1.AuthGuard('local') {
+const common_1 = __webpack_require__(4);
+const auth_service_1 = __webpack_require__(24);
+let LocalAuthGuard = LocalAuthGuard_1 = class LocalAuthGuard extends passport_1.AuthGuard('local') {
+    constructor(authSerivce) {
+        super();
+        this.authSerivce = authSerivce;
+        this.logger = new common_1.Logger(LocalAuthGuard_1.name);
+    }
+    async canActivate(context) {
+        const request = context.switchToHttp().getRequest();
+        const user = await this.authSerivce.validateUser('jslee', '1234');
+        if (user) {
+            request.user = {
+                _id: user.id,
+                id: user.id,
+                name: user.name,
+            };
+            return true;
+        }
+        return false;
+    }
 };
-LocalAuthGuard = __decorate([
-    common_1.Injectable()
+LocalAuthGuard = LocalAuthGuard_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
 ], LocalAuthGuard);
 exports.LocalAuthGuard = LocalAuthGuard;
 
@@ -1048,9 +1072,8 @@ let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.Pas
         this.authService = authService;
         this.logger = new common_1.Logger(LocalStrategy_1.name);
     }
-    async validate(username, password) {
-        this.logger.debug("localstartegy validate");
-        const user = await this.authService.validateUser(username, password);
+    async validate(id, passwd) {
+        const user = await this.authService.validateUser(id, passwd);
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
@@ -1084,6 +1107,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var JwtStrategy_1;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.JwtStrategy = void 0;
@@ -1101,9 +1135,8 @@ let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportS
         this.logger = new common_1.Logger(JwtStrategy_1.name);
     }
     async validate(payload) {
-        this.logger.debug("JwtStrategy validate");
-        this.logger.debug(payload);
-        return { userId: payload.sub, username: payload.username };
+        const { iat, exp } = payload, user = __rest(payload, ["iat", "exp"]);
+        return Object.assign({}, user);
     }
 };
 JwtStrategy = JwtStrategy_1 = __decorate([
@@ -1134,8 +1167,6 @@ let OpenApiAuthGuard = OpenApiAuthGuard_1 = class OpenApiAuthGuard {
     }
     canActivate(context) {
         const request = context.switchToHttp().getRequest();
-        this.logger.debug("canActivate");
-        this.logger.debug(request.headers);
         return true;
     }
 };
@@ -1173,8 +1204,6 @@ let OpenApiStrategy = OpenApiStrategy_1 = class OpenApiStrategy extends passport
         this.logger = new common_1.Logger(OpenApiStrategy_1.name);
     }
     async validate(...args) {
-        this.logger.debug("OpenApiStrategy validate");
-        this.logger.debug(args);
         return true;
     }
 };
@@ -1183,6 +1212,38 @@ OpenApiStrategy = OpenApiStrategy_1 = __decorate([
     __metadata("design:paramtypes", [])
 ], OpenApiStrategy);
 exports.OpenApiStrategy = OpenApiStrategy;
+
+
+/***/ }),
+/* 40 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.usersProviders = void 0;
+const user_schema_1 = __webpack_require__(41);
+exports.usersProviders = [
+    {
+        provide: 'USER_MODEL',
+        useFactory: (mongoose) => mongoose.model('User', user_schema_1.UserSchema),
+        inject: ['DATABASE_CONNECTION'],
+    },
+];
+
+
+/***/ }),
+/* 41 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserSchema = void 0;
+const mongoose = __webpack_require__(10);
+exports.UserSchema = new mongoose.Schema({
+    id: String,
+    name: String,
+    passwd: String,
+});
 
 
 /***/ })
