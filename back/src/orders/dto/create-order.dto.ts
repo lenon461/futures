@@ -1,5 +1,5 @@
 export class CreateOrderDto {
-    readonly memberId: String;
+    memberId: String;
     readonly marketId: String;
     readonly price: Number;
     readonly qty: Number;

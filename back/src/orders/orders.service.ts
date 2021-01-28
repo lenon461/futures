@@ -7,8 +7,7 @@ import { Order } from './interfaces/order.interface';
 export class OrdersService {
   constructor(
     @Inject('ORDER_MODEL') private readonly orderModel: Model<Order>,
-    ) { 
-  }
+  ) { }
   private readonly logger = new Logger(OrdersService.name);
 
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
@@ -26,8 +25,8 @@ export class OrdersService {
     return order
   }
   
-  async readAll() {
-    const order =  await this.orderModel.find().exec();
+  async readAll(_id) {
+    const order =  await this.orderModel.find({_id}).exec();
     return order
   }
 

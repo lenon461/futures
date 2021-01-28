@@ -232,7 +232,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var OrdersController_1, _a, _b, _c, _d, _e;
+var OrdersController_1, _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersController = void 0;
 const common_1 = __webpack_require__(4);
@@ -241,30 +241,27 @@ const orders_service_1 = __webpack_require__(12);
 const create_order_dto_1 = __webpack_require__(13);
 const bull_1 = __webpack_require__(7);
 const bull_2 = __webpack_require__(14);
+const jwt_auth_guard_1 = __webpack_require__(32);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
         this.orderQueue = orderQueue;
         this.logger = new common_1.Logger(OrdersController_1.name);
     }
-    async postOrder(createOrderDto) {
+    async postOrder(request, createOrderDto) {
         createOrderDto.total_qty = createOrderDto.qty;
         const order = await this.ordersService.create(createOrderDto);
         this.logger.debug(createOrderDto.marketId.toString());
         this.orderQueue.add(createOrderDto.marketId.toString(), order, { attempts: 5, backoff: 1000 });
         return order;
     }
+    async getOrders(request) {
+        const orders = await this.ordersService.readAll(request.user._id);
+        return orders;
+    }
     async cancelOrder(cancelOrderDto) {
         this.orderQueue.add(cancelOrderDto.marketId.toString() + "Cancel", cancelOrderDto, { attempts: 5, backoff: 1000 });
         return 'success';
-    }
-    async getOrderAll() {
-        const orders = await this.ordersService.readAll();
-        return orders;
-    }
-    async getOrderOne(id) {
-        const orders = await this.ordersService.readOne(id);
-        return orders;
     }
     async deleteOrderAll(memberId) {
         return this.ordersService.deleteAll(memberId);
@@ -274,11 +271,18 @@ __decorate([
     common_1.Post(),
     swagger_1.ApiOperation({ summary: 'Create Order' }),
     swagger_1.ApiResponse({ status: 201, description: 'Created' }),
-    __param(0, common_1.Body()),
+    __param(0, common_1.Request()), __param(1, common_1.Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof create_order_dto_1.CreateOrderDto !== "undefined" && create_order_dto_1.CreateOrderDto) === "function" ? _a : Object]),
+    __metadata("design:paramtypes", [Object, typeof (_a = typeof create_order_dto_1.CreateOrderDto !== "undefined" && create_order_dto_1.CreateOrderDto) === "function" ? _a : Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "postOrder", null);
+__decorate([
+    common_1.Get(),
+    __param(0, common_1.Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
+], OrdersController.prototype, "getOrders", null);
 __decorate([
     common_1.Delete(''),
     __param(0, common_1.Body()),
@@ -287,19 +291,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "cancelOrder", null);
 __decorate([
-    common_1.Get(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
-], OrdersController.prototype, "getOrderAll", null);
-__decorate([
-    common_1.Get(':id'),
-    __param(0, common_1.Param('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
-], OrdersController.prototype, "getOrderOne", null);
-__decorate([
     common_1.Delete('all/:id'),
     __param(0, common_1.Param('id')),
     __metadata("design:type", Function),
@@ -307,9 +298,10 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "deleteOrderAll", null);
 OrdersController = OrdersController_1 = __decorate([
+    common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
     common_1.Controller('orders'),
     __param(1, bull_1.InjectQueue('order')),
-    __metadata("design:paramtypes", [typeof (_d = typeof orders_service_1.OrdersService !== "undefined" && orders_service_1.OrdersService) === "function" ? _d : Object, typeof (_e = typeof bull_2.Queue !== "undefined" && bull_2.Queue) === "function" ? _e : Object])
+    __metadata("design:paramtypes", [typeof (_c = typeof orders_service_1.OrdersService !== "undefined" && orders_service_1.OrdersService) === "function" ? _c : Object, typeof (_d = typeof bull_2.Queue !== "undefined" && bull_2.Queue) === "function" ? _d : Object])
 ], OrdersController);
 exports.OrdersController = OrdersController;
 
@@ -355,8 +347,8 @@ let OrdersService = OrdersService_1 = class OrdersService {
         const order = await this.orderModel.find({ id }).exec();
         return order;
     }
-    async readAll() {
-        const order = await this.orderModel.find().exec();
+    async readAll(_id) {
+        const order = await this.orderModel.find({ _id }).exec();
         return order;
     }
     async cancelOne(_id) {
@@ -1103,7 +1095,7 @@ let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportS
     async validate(payload) {
         this.logger.debug("JwtStrategy validate");
         this.logger.debug(payload);
-        return { userId: payload.sub, username: payload.username };
+        return Object.assign({}, payload);
     }
 };
 JwtStrategy = JwtStrategy_1 = __decorate([
