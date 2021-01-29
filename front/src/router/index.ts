@@ -21,6 +21,18 @@ const routes: Array<RouteConfig> = [
     name: "Trade",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Trade.vue")
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Login.vue")
+  },
+  {
+    path: "/asset",
+    name: "Asset",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Asset.vue")
   }
 ];
 

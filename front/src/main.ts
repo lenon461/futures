@@ -8,6 +8,7 @@ import router from "./router";
 import store from "./store";
 
 Vue.config.productionTip = false;
+Vue.use(BootstrapVue);
 
 new Vue({
   router,
@@ -15,4 +16,3 @@ new Vue({
   render: h => h(App)
 }).$mount("#app");
 
-Vue.use(BootstrapVue);

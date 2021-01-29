@@ -22,8 +22,10 @@ export class OrdersController {
   @ApiResponse({status: 201, description: 'Created'})
   async postOrder(@Request() request, @Body() createOrderDto: CreateOrderDto) {
     createOrderDto.total_qty = createOrderDto.qty
+    createOrderDto.memberId = request.user.id
     const order = await this.ordersService.create(createOrderDto);
     this.logger.debug(createOrderDto.marketId.toString())
+    this.logger.debug(request.user)
     this.orderQueue.add(createOrderDto.marketId.toString(), order, {attempts: 5, backoff: 1000})
     return order
   }

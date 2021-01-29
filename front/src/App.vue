@@ -5,6 +5,7 @@
       <router-link to="/about">About</router-link>
     </div>
     <router-view />
+    <Footer />
   </div>
 </template>
 
@@ -12,8 +13,13 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import socket from "./api/socket";
+import Footer from "@/components/footer.vue";
 
-@Component
+@Component({
+  components: {
+    Footer
+  }
+})
 export default class App extends Vue {
   created() {
     socket.init();

@@ -1,6 +1,16 @@
 import axios from "./axios";
 // import Chart from "./chart"
 export default {
+  Auth: {
+    postLogin(body){
+      return axios.post("/auth/login", body);
+    }
+  },
+  User: {
+    getProfile() {
+      return axios.get("/users/profile")
+    }
+  },
   Summoners: {
     getSummoners() {
       return axios.get("/summoners");

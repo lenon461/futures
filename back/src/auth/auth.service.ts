@@ -10,13 +10,11 @@ export class AuthService {
     ) {}
     private readonly logger = new Logger(AuthService.name);
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    this.logger.debug("validateUser")
-    this.logger.debug(username + pass)
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+  async validateUser(id: string, passwd: string): Promise<any> {
+    const user = await this.usersService.readOne(id);
+    if (user && user.passwd === passwd) {
+      const { _id, id, name, passwd } = user;
+      return {_id, id, name};
     }
     return null;
   }

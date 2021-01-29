@@ -1852,7 +1852,7 @@
         "affectsGlobalScope": false
       },
       "../src/orders/orders.controller.ts": {
-        "version": "0563b93a54f61d8455d6fe4d33286d4300b481a76236997b7bf66448cf942dfe",
+        "version": "6e173ba0000c1a605e22d01843ec83be95a21c7dbcf2c55d87b02c196b32b5a9",
         "signature": "f0889608bce8a7b5324e4fd0db10e709cb71e1b50b6df1c9585b3f0e22956b50",
         "affectsGlobalScope": false
       },
@@ -1947,8 +1947,8 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.service.ts": {
-        "version": "d66fc75a94f6bc4e6a93815997c539e7350b0e1a8d2fa29b4708def9640ab0cc",
-        "signature": "683bf4dbf83d87dad17ca83fd4071430ba59fb53f858bb1a97e3e51148846fd2",
+        "version": "1a1ae3ff4dede307c5fe0545fbe669f1a36d5c3b60ce96c3ab897228f7c2342d",
+        "signature": "2f96c47cb8a7034fc9ac6b17d8a7ba8b1dcd538a4a45bd810f38fd6274f3b3f5",
         "affectsGlobalScope": false
       },
       "../src/users/users.controller.ts": {
@@ -1967,7 +1967,7 @@
         "affectsGlobalScope": false
       },
       "../src/auth/guards/local-auth.guard.ts": {
-        "version": "6bc17af75dca5231de546f9177d6785a30378b3048286892534d4834516e62f4",
+        "version": "cf50aaff0dec885eb71b96c2a91eab0df52fde3c2487d952822e7ee07e4a3393",
         "signature": "de00899ee8403ca6d4ac89938059031acd4e52dd417186b11c3803fd1e2247ba",
         "affectsGlobalScope": false
       },
@@ -1992,8 +1992,8 @@
         "affectsGlobalScope": false
       },
       "../src/auth/strategies/local.strategy.ts": {
-        "version": "a639809507fe44ad200961d95a2afd92751ed2f0f033c09bc6582f26897908e2",
-        "signature": "bc0d85e0dd66b41a1ef0336fef7405fe867888961850502ff9d127230ff55f15",
+        "version": "7ca705931f39d625a1bb8999b47dc913d2ef448ba2fb002bbccdd1dcb573cfe4",
+        "signature": "88cf105b48649e473ae761faf53b033782e6df75449664969fbc05abf972cdfc",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/passport-jwt/index.d.ts": {
@@ -4493,7 +4493,8 @@
       ],
       "../src/auth/guards/local-auth.guard.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
-        "../node_modules/@nestjs/passport/index.d.ts"
+        "../node_modules/@nestjs/passport/index.d.ts",
+        "../src/auth/auth.service.ts"
       ],
       "../src/auth/guards/open-api-auth.guard.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
@@ -7000,7 +7001,19 @@
       "../src/app.module.ts",
       "../src/auth/auth.controller.ts",
       "../src/auth/auth.module.ts",
-      "../src/auth/auth.service.ts",
+      [
+        "../src/auth/auth.service.ts",
+        [
+          {
+            "file": "../src/auth/auth.service.ts",
+            "start": 459,
+            "length": 7,
+            "code": 2339,
+            "category": 1,
+            "messageText": "Property 'readOne' does not exist on type 'UsersService'."
+          }
+        ]
+      ],
       "../src/auth/constants.ts",
       "../src/auth/guards/jwt-auth.guard.ts",
       "../src/auth/guards/local-auth.guard.ts",

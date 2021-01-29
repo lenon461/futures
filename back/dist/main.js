@@ -250,8 +250,10 @@ let OrdersController = OrdersController_1 = class OrdersController {
     }
     async postOrder(request, createOrderDto) {
         createOrderDto.total_qty = createOrderDto.qty;
+        createOrderDto.memberId = request.user.id;
         const order = await this.ordersService.create(createOrderDto);
         this.logger.debug(createOrderDto.marketId.toString());
+        this.logger.debug(request.user);
         this.orderQueue.add(createOrderDto.marketId.toString(), order, { attempts: 5, backoff: 1000 });
         return order;
     }
@@ -680,17 +682,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var AuthService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthService = void 0;
@@ -703,13 +694,11 @@ let AuthService = AuthService_1 = class AuthService {
         this.jwtService = jwtService;
         this.logger = new common_1.Logger(AuthService_1.name);
     }
-    async validateUser(username, pass) {
-        this.logger.debug("validateUser");
-        this.logger.debug(username + pass);
-        const user = await this.usersService.findOne(username);
-        if (user && user.password === pass) {
-            const { password } = user, result = __rest(user, ["password"]);
-            return result;
+    async validateUser(id, passwd) {
+        const user = await this.usersService.readOne(id);
+        if (user && user.passwd === passwd) {
+            const { _id, id, name, passwd } = user;
+            return { _id, id, name };
         }
         return null;
     }
@@ -997,8 +986,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LocalAuthGuard = void 0;
-const common_1 = __webpack_require__(4);
 const passport_1 = __webpack_require__(29);
+const common_1 = __webpack_require__(4);
 let LocalAuthGuard = class LocalAuthGuard extends passport_1.AuthGuard('local') {
 };
 LocalAuthGuard = __decorate([
@@ -1036,13 +1025,16 @@ const common_1 = __webpack_require__(4);
 const auth_service_1 = __webpack_require__(24);
 let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy) {
     constructor(authService) {
-        super();
+        super({
+            usernameField: 'id',
+            passwordField: 'passwd'
+        });
         this.authService = authService;
         this.logger = new common_1.Logger(LocalStrategy_1.name);
     }
-    async validate(username, password) {
-        this.logger.debug("localstartegy validate");
-        const user = await this.authService.validateUser(username, password);
+    async validate(id, passwd, done) {
+        this.logger.debug("📢 LocalStartegy");
+        const user = await this.authService.validateUser(id, passwd);
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
