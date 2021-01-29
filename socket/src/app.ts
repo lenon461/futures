@@ -18,9 +18,9 @@ io.on("connect", (socket: Socket) => {
     });
     socket.on('subscribe', function(message) { 
         if(message === 'ticker') {
-            io.emit('ticker', JSON.stringify(getTicks()))
             setInterval(() => {
-                io.emit('ticker', JSON.stringify(getTicks()))
+                const ticker = getTicks()
+                io.emit('ticker', JSON.stringify(ticker))
             }, 1000);
         }
         const [event, room] = message.split('@')

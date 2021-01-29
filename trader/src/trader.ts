@@ -39,9 +39,9 @@ class Trader {
 
     publish() {
         setInterval(() => {
-            // 체결시 마다 실행될 훅
-            publisher.publish(`#ticker`, JSON.stringify({
-                name: `${this.MKNAME}`,
+            // // 체결시 마다 실행될 훅
+            publisher.publish(`#trade`, JSON.stringify({
+                marketId: `${this.MKNAME}`,
                 point: parseFloat((Math.random() * 10000 / 100).toFixed(2)),
             }))
         }, 1000);
@@ -263,6 +263,11 @@ class Trader {
         // this.ordersQueue.add('orderComplete', order)
         // this.Queue.add('orderComplete', order, {attempts: 5, backoff: 1000})
         await MODEL.ORDER_MODEL.findByIdAndUpdate(order._id, {status: order.status, qty: order.qty}, {useFindAndModify: false})
+
+        // publisher.publish(`#trade`, JSON.stringify({
+        //     marketId: `${this.MKNAME}`,
+        //     point: parseFloat((Math.random() * 10000 / 100).toFixed(2)),
+        // }))
     }
 
     private async cancelOrder(order) {

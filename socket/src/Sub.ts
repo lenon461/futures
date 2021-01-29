@@ -8,9 +8,9 @@ const Subscribe = (io) => {
 
     subscriber.on("message", function(channel, message) {
         const {event, name} = {event : channel.split('@')[0], name: channel.split('@')[1]}
-        if(event === '#ticker') {
+        if(event === '#trade') {
             const tick = JSON.parse(message);
-            _.set(ticks, tick.name, tick)
+            _.set(ticks, tick.marketId, tick)
         }
         if(event === '#depth') {
             const name = JSON.parse(message).name
@@ -19,9 +19,10 @@ const Subscribe = (io) => {
     });
 }
 const getTicks = () => {
-    return ticks
+    console.log(ticks)
+    return Object.values(ticks)
 }
-subscriber.subscribe('#ticker')
+subscriber.subscribe('#trade')
 subscriber.subscribe('#depth')
 
 export default Subscribe

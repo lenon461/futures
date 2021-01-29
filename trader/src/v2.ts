@@ -157,7 +157,6 @@ class Bid {
             price: this.price
         }
     }
-    
 }
 class AskBook {
     asks: Ask[] = []
