@@ -7,17 +7,18 @@
           <div class="last-amount">마지막 체결가</div>
           <div class="close-ratio">전일 대비%</div>
         </div>
+        {{ticker}}
         <div
           class="ticker"
-          v-for="(summoner, index) in summoners"
-          :key="summoner + index"
+          v-for="(tick, index) in ticker"
+          :key="tick + index"
           @click="join(item.name)"
         >
-          summoner
+          tick
         </div>
         <div class="coin-wraper">
-          <div class="name">NAME</div>
-          <div class="point">POINT</div>
+          <div class="name">{{tick}}</div>
+          <!-- <div class="point">{{tick.point}}</div> -->
           <div class="diff">DIFF</div>
         </div>
       </b-list-group-item>
@@ -32,7 +33,7 @@ import { State, Action, Getter } from "vuex-class";
 import socket from "../api/socket";
 @Component
 export default class Ticker extends Vue {
-  @Prop() readonly summoners!: any;
+  @Prop() readonly ticker!: any;
 
   created() {
     // console.log("")

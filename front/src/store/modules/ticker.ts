@@ -1,28 +1,7 @@
 import _ from "lodash";
 
 const state = {
-  ticker: [
-    {
-      name: "A",
-      point: 30
-    },
-    {
-      name: "B",
-      point: 30
-    },
-    {
-      name: "C",
-      point: 30
-    },
-    {
-      name: "D",
-      point: 30
-    },
-    {
-      name: "E",
-      point: 30
-    }
-  ]
+  ticker: []
 };
 
 const getters = {

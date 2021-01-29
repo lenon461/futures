@@ -1,17 +1,17 @@
 <template>
   <div>
     <b-tabs content-class="mt-3" fill>
-      <b-tab title="즐겨찾기" active>
-        <Ticker :summoners="summoners"></Ticker>
+      <b-tab title="즐겨찾기" disabled>
+        X
       </b-tab>
-      <b-tab title="인기">
-        <Ticker></Ticker>
+      <b-tab title="인기" active>
+        <Ticker :ticker="ticker"></Ticker>
       </b-tab>
       <b-tab title="프로">
-        <Ticker></Ticker>
+        X
       </b-tab>
       <b-tab title="아마">
-        <Ticker></Ticker>
+        X
       </b-tab>
     </b-tabs>
   </div>
@@ -22,6 +22,7 @@ import { Component, Vue } from "vue-property-decorator";
 import Ticker from "@/components/ticker.vue";
 import Api from "../api";
 import socket from "../api/socket";
+import { State, Action, Getter } from "vuex-class";
 
 @Component({
   components: {
@@ -31,9 +32,12 @@ import socket from "../api/socket";
 export default class Market extends Vue {
   summoners: any = [];
   error: any = [];
-  // async summoners() {
-  //    return await Api.Summoners.getSummoners()
-  // }
+
+  @Getter("getTicker") ticker: any;
+
+  get items() {
+    return this.ticker;
+  }
   async created() {
     // console.log("")
     this.summoners = await Api.Summoners.getSummoners();
