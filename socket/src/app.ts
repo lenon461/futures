@@ -23,7 +23,7 @@ io.on("connect", (socket: Socket) => {
                 io.emit('ticker', JSON.stringify(ticker))
             }, 1000);
         }
-        const [event, room] = message.split('@')
+        const [event, room] = message?.split('@') || ["??", "??"]
         console.log(event, room)
         if(event === 'depth') {
             console.log('joining room', room);
