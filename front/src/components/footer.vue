@@ -1,9 +1,9 @@
 <template>
   <div class="footer">
     <b-button-group name="footer">
-      <b-button to="home">Home</b-button>
-      <b-button to="market">Market</b-button>
-      <b-button to="trade">Trade</b-button>
+      <b-button to="/home">Home</b-button>
+      <b-button to="/market">Market</b-button>
+      <b-button to="/trade">Trade</b-button>
       <b-button disabled>Futures</b-button>
       <b-button>Asset</b-button>
     </b-button-group>

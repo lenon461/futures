@@ -7,13 +7,15 @@
         <div class="close-ratio">전일 대비%</div>
       </div>
       <b-list-group-item button v-for="(tick, index) in ticker" :key="index">
-        <div class="ticker" @click="join(item.name)">
-          <div class="coin-wraper">
-            <div class="name">{{ tick.marketId }}</div>
-            <div class="point">{{ tick.point }}</div>
-            <div class="diff">+ 0.00%</div>
+        <router-link :to="{ name: 'Trade', params: { marketId: tick.marketId } }">
+          <div class="ticker">
+            <div class="coin-wraper">
+              <div class="name">{{ tick.marketId }}</div>
+              <div class="point">{{ tick.point }}</div>
+              <div class="diff">+ 0.00%</div>
+            </div>
           </div>
-        </div>
+        </router-link>
       </b-list-group-item>
     </b-list-group>
   </div>

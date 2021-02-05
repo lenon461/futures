@@ -26,15 +26,17 @@ import socket from "../api/socket";
 export default class Trade extends Vue {
   public depth = {};
 
+  get marketId() {
+    return this.$route.params.marketId;
+  }
   setDepth(data) {
     this.depth = JSON.parse(data);
   }
   created() {
-    socket.emit("subscribe", "depth@PAKA");
+    socket.emit("subscribe", `depth@${this.marketId}`);
     socket.on("depth", this.setDepth);
   }
 
-  private fav;
 }
 </script>
 <style lang="scss" scoped>
