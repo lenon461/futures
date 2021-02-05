@@ -38,10 +38,10 @@ export default class Market extends Vue {
   get items() {
     return this.ticker;
   }
-  async created() {
+  created() {
     // console.log("")
-    this.summoners = await Api.Summoners.getSummoners();
-    this.summoners = await Api.Summoners.getError();
+    this.summoners = Api.Summoners.getSummoners();
+    this.summoners = Api.Summoners.getError();
   }
 }
 </script>

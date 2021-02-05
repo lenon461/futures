@@ -54,10 +54,10 @@ exports.AppModule = void 0;
 const common_1 = __webpack_require__(4);
 const logger_1 = __webpack_require__(5);
 const orders_module_1 = __webpack_require__(6);
-const summoners_module_1 = __webpack_require__(17);
+const summoners_module_1 = __webpack_require__(19);
 const bull_1 = __webpack_require__(7);
-const auth_module_1 = __webpack_require__(23);
-const users_module_1 = __webpack_require__(27);
+const auth_module_1 = __webpack_require__(25);
+const users_module_1 = __webpack_require__(29);
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -142,7 +142,7 @@ const bull_1 = __webpack_require__(7);
 const common_1 = __webpack_require__(4);
 const database_module_1 = __webpack_require__(8);
 const orders_controller_1 = __webpack_require__(11);
-const orders_provider_1 = __webpack_require__(15);
+const orders_provider_1 = __webpack_require__(17);
 const orders_service_1 = __webpack_require__(12);
 let OrdersModule = class OrdersModule {
 };
@@ -241,7 +241,7 @@ const orders_service_1 = __webpack_require__(12);
 const create_order_dto_1 = __webpack_require__(13);
 const bull_1 = __webpack_require__(7);
 const bull_2 = __webpack_require__(14);
-const jwt_auth_guard_1 = __webpack_require__(32);
+const jwt_auth_guard_1 = __webpack_require__(15);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
@@ -394,12 +394,59 @@ module.exports = require("bull");;
 
 /***/ }),
 /* 15 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var JwtAuthGuard_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JwtAuthGuard = void 0;
+const common_1 = __webpack_require__(4);
+const passport_1 = __webpack_require__(16);
+let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends passport_1.AuthGuard('jwt') {
+    constructor() {
+        super(...arguments);
+        this.logger = new common_1.Logger(JwtAuthGuard_1.name);
+    }
+    canActivate(context) {
+        return super.canActivate(context);
+    }
+    handleRequest(err, user, info) {
+        this.logger.debug("handleRequest");
+        this.logger.debug(err);
+        this.logger.debug(user);
+        this.logger.debug(info);
+        if (err || !user) {
+            throw err || new common_1.UnauthorizedException();
+        }
+        return user;
+    }
+};
+JwtAuthGuard = JwtAuthGuard_1 = __decorate([
+    common_1.Injectable()
+], JwtAuthGuard);
+exports.JwtAuthGuard = JwtAuthGuard;
+
+
+/***/ }),
+/* 16 */
+/***/ ((module) => {
+
+module.exports = require("@nestjs/passport");;
+
+/***/ }),
+/* 17 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ordersProviders = void 0;
-const order_schema_1 = __webpack_require__(16);
+const order_schema_1 = __webpack_require__(18);
 exports.ordersProviders = [
     {
         provide: 'ORDER_MODEL',
@@ -410,7 +457,7 @@ exports.ordersProviders = [
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -430,7 +477,7 @@ exports.OrderSchema = new mongoose.Schema({
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -443,9 +490,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersModule = void 0;
 const common_1 = __webpack_require__(4);
-const summoners_controller_1 = __webpack_require__(18);
-const summoners_provider_1 = __webpack_require__(21);
-const summoners_service_1 = __webpack_require__(20);
+const summoners_controller_1 = __webpack_require__(20);
+const summoners_provider_1 = __webpack_require__(23);
+const summoners_service_1 = __webpack_require__(22);
 const database_module_1 = __webpack_require__(8);
 let SummonersModule = class SummonersModule {
 };
@@ -460,7 +507,7 @@ exports.SummonersModule = SummonersModule;
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -481,8 +528,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SummonersController = void 0;
 const common_1 = __webpack_require__(4);
 const swagger_1 = __webpack_require__(2);
-const create_summoner_dto_1 = __webpack_require__(19);
-const summoners_service_1 = __webpack_require__(20);
+const create_summoner_dto_1 = __webpack_require__(21);
+const summoners_service_1 = __webpack_require__(22);
 let SummonersController = SummonersController_1 = class SummonersController {
     constructor(summonersService) {
         this.summonersService = summonersService;
@@ -532,7 +579,7 @@ exports.SummonersController = SummonersController;
 
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -544,7 +591,7 @@ exports.CreateSummonerDto = CreateSummonerDto;
 
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -591,13 +638,13 @@ exports.SummonersService = SummonersService;
 
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.summonersProviders = void 0;
-const summoner_schema_1 = __webpack_require__(22);
+const summoner_schema_1 = __webpack_require__(24);
 exports.summonersProviders = [
     {
         provide: 'SUMMONER_MODEL',
@@ -608,7 +655,7 @@ exports.summonersProviders = [
 
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -627,7 +674,7 @@ exports.SummonerSchema = new mongoose.Schema({
 
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -640,12 +687,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthModule = void 0;
 const common_1 = __webpack_require__(4);
-const auth_service_1 = __webpack_require__(24);
-const users_module_1 = __webpack_require__(27);
-const passport_1 = __webpack_require__(29);
-const jwt_1 = __webpack_require__(26);
-const constants_1 = __webpack_require__(30);
-const auth_controller_1 = __webpack_require__(31);
+const auth_service_1 = __webpack_require__(26);
+const users_module_1 = __webpack_require__(29);
+const passport_1 = __webpack_require__(16);
+const jwt_1 = __webpack_require__(28);
+const constants_1 = __webpack_require__(31);
+const auth_controller_1 = __webpack_require__(32);
 const local_strategy_1 = __webpack_require__(35);
 const jwt_strategy_1 = __webpack_require__(37);
 const open_api_strategy_1 = __webpack_require__(39);
@@ -669,7 +716,7 @@ exports.AuthModule = AuthModule;
 
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -686,8 +733,8 @@ var AuthService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthService = void 0;
 const common_1 = __webpack_require__(4);
-const users_service_1 = __webpack_require__(25);
-const jwt_1 = __webpack_require__(26);
+const users_service_1 = __webpack_require__(27);
+const jwt_1 = __webpack_require__(28);
 let AuthService = AuthService_1 = class AuthService {
     constructor(usersService, jwtService) {
         this.usersService = usersService;
@@ -719,7 +766,7 @@ exports.AuthService = AuthService;
 
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -761,13 +808,13 @@ exports.UsersService = UsersService;
 
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ ((module) => {
 
 module.exports = require("@nestjs/jwt");;
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -780,8 +827,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersModule = void 0;
 const common_1 = __webpack_require__(4);
-const users_service_1 = __webpack_require__(25);
-const users_controller_1 = __webpack_require__(28);
+const users_service_1 = __webpack_require__(27);
+const users_controller_1 = __webpack_require__(30);
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
@@ -795,7 +842,7 @@ exports.UsersModule = UsersModule;
 
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -815,8 +862,8 @@ var UsersController_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersController = void 0;
 const common_1 = __webpack_require__(4);
-const jwt_auth_guard_1 = __webpack_require__(32);
-const users_service_1 = __webpack_require__(25);
+const jwt_auth_guard_1 = __webpack_require__(15);
+const users_service_1 = __webpack_require__(27);
 let UsersController = UsersController_1 = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -843,13 +890,7 @@ exports.UsersController = UsersController;
 
 
 /***/ }),
-/* 29 */
-/***/ ((module) => {
-
-module.exports = require("@nestjs/passport");;
-
-/***/ }),
-/* 30 */
+/* 31 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -861,7 +902,7 @@ exports.jwtConstants = {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -881,10 +922,10 @@ var AuthController_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthController = void 0;
 const common_1 = __webpack_require__(4);
-const auth_service_1 = __webpack_require__(24);
+const auth_service_1 = __webpack_require__(26);
 const local_auth_guard_1 = __webpack_require__(33);
-const jwt_auth_guard_1 = __webpack_require__(32);
-const open_api_auth_guard_1 = __webpack_require__(38);
+const jwt_auth_guard_1 = __webpack_require__(15);
+const open_api_auth_guard_1 = __webpack_require__(34);
 let AuthController = AuthController_1 = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -933,47 +974,6 @@ exports.AuthController = AuthController;
 
 
 /***/ }),
-/* 32 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var JwtAuthGuard_1;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.JwtAuthGuard = void 0;
-const common_1 = __webpack_require__(4);
-const passport_1 = __webpack_require__(29);
-let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends passport_1.AuthGuard('jwt') {
-    constructor() {
-        super(...arguments);
-        this.logger = new common_1.Logger(JwtAuthGuard_1.name);
-    }
-    canActivate(context) {
-        return super.canActivate(context);
-    }
-    handleRequest(err, user, info) {
-        this.logger.debug("handleRequest");
-        this.logger.debug(err);
-        this.logger.debug(user);
-        this.logger.debug(info);
-        if (err || !user) {
-            throw err || new common_1.UnauthorizedException();
-        }
-        return user;
-    }
-};
-JwtAuthGuard = JwtAuthGuard_1 = __decorate([
-    common_1.Injectable()
-], JwtAuthGuard);
-exports.JwtAuthGuard = JwtAuthGuard;
-
-
-/***/ }),
 /* 33 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -986,7 +986,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LocalAuthGuard = void 0;
-const passport_1 = __webpack_require__(29);
+const passport_1 = __webpack_require__(16);
 const common_1 = __webpack_require__(4);
 let LocalAuthGuard = class LocalAuthGuard extends passport_1.AuthGuard('local') {
 };
@@ -998,107 +998,6 @@ exports.LocalAuthGuard = LocalAuthGuard;
 
 /***/ }),
 /* 34 */
-/***/ ((module) => {
-
-module.exports = require("passport-local");;
-
-/***/ }),
-/* 35 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var LocalStrategy_1, _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LocalStrategy = void 0;
-const passport_local_1 = __webpack_require__(34);
-const passport_1 = __webpack_require__(29);
-const common_1 = __webpack_require__(4);
-const auth_service_1 = __webpack_require__(24);
-let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy) {
-    constructor(authService) {
-        super({
-            usernameField: 'id',
-            passwordField: 'passwd'
-        });
-        this.authService = authService;
-        this.logger = new common_1.Logger(LocalStrategy_1.name);
-    }
-    async validate(id, passwd, done) {
-        this.logger.debug("📢 LocalStartegy");
-        const user = await this.authService.validateUser(id, passwd);
-        if (!user) {
-            throw new common_1.UnauthorizedException();
-        }
-        return user;
-    }
-};
-LocalStrategy = LocalStrategy_1 = __decorate([
-    common_1.Injectable(),
-    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
-], LocalStrategy);
-exports.LocalStrategy = LocalStrategy;
-
-
-/***/ }),
-/* 36 */
-/***/ ((module) => {
-
-module.exports = require("passport-jwt");;
-
-/***/ }),
-/* 37 */
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var JwtStrategy_1;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.JwtStrategy = void 0;
-const passport_jwt_1 = __webpack_require__(36);
-const passport_1 = __webpack_require__(29);
-const common_1 = __webpack_require__(4);
-const constants_1 = __webpack_require__(30);
-let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportStrategy(passport_jwt_1.Strategy) {
-    constructor() {
-        super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: constants_1.jwtConstants.secret,
-        });
-        this.logger = new common_1.Logger(JwtStrategy_1.name);
-    }
-    async validate(payload) {
-        this.logger.debug("JwtStrategy validate");
-        this.logger.debug(payload);
-        return Object.assign({}, payload);
-    }
-};
-JwtStrategy = JwtStrategy_1 = __decorate([
-    common_1.Injectable(),
-    __metadata("design:paramtypes", [])
-], JwtStrategy);
-exports.JwtStrategy = JwtStrategy;
-
-
-/***/ }),
-/* 38 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1130,6 +1029,107 @@ exports.OpenApiAuthGuard = OpenApiAuthGuard;
 
 
 /***/ }),
+/* 35 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var LocalStrategy_1, _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LocalStrategy = void 0;
+const passport_local_1 = __webpack_require__(36);
+const passport_1 = __webpack_require__(16);
+const common_1 = __webpack_require__(4);
+const auth_service_1 = __webpack_require__(26);
+let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy) {
+    constructor(authService) {
+        super({
+            usernameField: 'id',
+            passwordField: 'passwd'
+        });
+        this.authService = authService;
+        this.logger = new common_1.Logger(LocalStrategy_1.name);
+    }
+    async validate(id, passwd, done) {
+        this.logger.debug("📢 LocalStartegy");
+        const user = await this.authService.validateUser(id, passwd);
+        if (!user) {
+            throw new common_1.UnauthorizedException();
+        }
+        return user;
+    }
+};
+LocalStrategy = LocalStrategy_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [typeof (_a = typeof auth_service_1.AuthService !== "undefined" && auth_service_1.AuthService) === "function" ? _a : Object])
+], LocalStrategy);
+exports.LocalStrategy = LocalStrategy;
+
+
+/***/ }),
+/* 36 */
+/***/ ((module) => {
+
+module.exports = require("passport-local");;
+
+/***/ }),
+/* 37 */
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var JwtStrategy_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JwtStrategy = void 0;
+const passport_jwt_1 = __webpack_require__(38);
+const passport_1 = __webpack_require__(16);
+const common_1 = __webpack_require__(4);
+const constants_1 = __webpack_require__(31);
+let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportStrategy(passport_jwt_1.Strategy) {
+    constructor() {
+        super({
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
+            secretOrKey: constants_1.jwtConstants.secret,
+        });
+        this.logger = new common_1.Logger(JwtStrategy_1.name);
+    }
+    async validate(payload) {
+        this.logger.debug("JwtStrategy validate");
+        this.logger.debug(payload);
+        return Object.assign({}, payload);
+    }
+};
+JwtStrategy = JwtStrategy_1 = __decorate([
+    common_1.Injectable(),
+    __metadata("design:paramtypes", [])
+], JwtStrategy);
+exports.JwtStrategy = JwtStrategy;
+
+
+/***/ }),
+/* 38 */
+/***/ ((module) => {
+
+module.exports = require("passport-jwt");;
+
+/***/ }),
 /* 39 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -1146,8 +1146,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var OpenApiStrategy_1;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OpenApiStrategy = void 0;
-const passport_local_1 = __webpack_require__(34);
-const passport_1 = __webpack_require__(29);
+const passport_local_1 = __webpack_require__(36);
+const passport_1 = __webpack_require__(16);
 const common_1 = __webpack_require__(4);
 let OpenApiStrategy = OpenApiStrategy_1 = class OpenApiStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy, 'openapi') {
     constructor() {

@@ -23,3 +23,11 @@ export default class Footer extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+.active {
+  background-color: green;
+}
+
+</style>
