@@ -207,7 +207,7 @@ p {
         }
         &-type-base {
           width: 45%;
-          background: pink;
+          background: #05D983;
           // display: inline-block;
           height: 30px;
           position: relative;
@@ -218,7 +218,7 @@ p {
             right: -12px;
             position: absolute;
             border-style: solid;
-            border-color: transparent transparent transparent pink;
+            border-color: transparent transparent transparent #05D983;
             border-width: 12px 0 12px 12px;
             line-height: 30px;
           }
