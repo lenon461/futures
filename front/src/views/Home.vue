@@ -1,7 +1,10 @@
 <template>
-  <div class="home">
-    <div></div>
-    <div></div>
+  <div class="home">ㄴㄴ
+    <div>
+      <img :src="'../assets/bn-trade.jpeg'" />
+      {{}}
+    </div>ㄴㄴㄴ
+    <div></div>ss
   </div>
 </template>
 

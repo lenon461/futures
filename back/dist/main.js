@@ -742,7 +742,9 @@ let AuthService = AuthService_1 = class AuthService {
         this.logger = new common_1.Logger(AuthService_1.name);
     }
     async validateUser(id, passwd) {
-        const user = await this.usersService.readOne(id);
+        const user = await this.usersService.findOne(id);
+        this.logger.debug(user);
+        this.logger.debug(user);
         if (user && user.passwd === passwd) {
             const { _id, id, name, passwd } = user;
             return { _id, id, name };
@@ -786,13 +788,13 @@ let UsersService = UsersService_1 = class UsersService {
         this.users = [
             {
                 userId: 1,
-                username: 'john',
-                password: 'changeme',
+                username: 'jslee',
+                passwd: '1234',
             },
             {
                 userId: 2,
                 username: 'maria',
-                password: 'guess',
+                passwd: 'guess',
             },
         ];
     }

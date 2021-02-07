@@ -40,8 +40,8 @@ export default class Market extends Vue {
   }
   created() {
     // console.log("")
-    this.summoners = Api.Summoners.getSummoners();
-    this.summoners = Api.Summoners.getError();
+    // this.summoners = Api.Summoners.getSummoners();
+    // this.summoners = Api.Summoners.getError();
   }
 }
 </script>

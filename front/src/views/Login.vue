@@ -33,12 +33,14 @@ export default class Login extends Vue {
   }
 
   async onSubmit(event) {
+    console.log("onSubmit")
     event.preventDefault();
     const result = await Api.Auth.postLogin({
       id: this.id,
       passwd: this.passwd
     });
     const token = result.data.access_token;
+    console.log(token)
     setAuthorization(token);
 
     this.$router.push("asset")
