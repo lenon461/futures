@@ -9,10 +9,6 @@ class Socket {
       console.log(`connect ${this.socket.id}`);
     });
 
-    this.socket.on("ticker", tick => {
-      Store.commit("updateTicker", tick);
-    });
-
     this.socket.on("disconnect", () => {
       console.log(`disconnect`);
     });

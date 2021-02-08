@@ -2,7 +2,8 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> | 
+      <router-link to="/login">Login</router-link>
     </div>
     <router-view />
     <Footer />
@@ -22,10 +23,19 @@ import Footer from "@/components/footer.vue";
 })
 export default class App extends Vue {
   created() {
+    console.log("created")
     socket.init();
+    socket.emit("subscribe", `ticker_all`);
+    socket.on("ticker_all", tick => {
+      this.$store.commit("updateTicker", tick);
+    });
   }
   mounted() {
     // console.log("mounted")
+  }
+  beforeDestroy() {
+    console.log("APP desotryeds")
+    socket.emit("unsubscribe", `ticker_all`);
   }
 }
 </script>

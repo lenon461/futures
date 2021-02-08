@@ -85,14 +85,19 @@ class Trader {
         return this.SellOrderBook
     }
     getOrderBooks() {
+        const qtyReducer = (acc, cur) => {
+            return {price : acc.price, qty: acc.qty + cur.qty}
+        }
         return {
             name: this.MKNAME,
-            S: this.getSellOrderBook().map(orders => orders.map(order => {
-                return { price: order.price, qty: order.qty }
-            })),
-            B: this.getBuyOrderBook().map(orders => orders.map(order => {
-                return { price: order.price, qty: order.qty }
-            })),
+            S: this.getSellOrderBook().map(orders => orders.reduce(qtyReducer)),
+            // S: this.getSellOrderBook().map(orders => orders.map(order => {
+            //     return { price: order.price, qty: order.qty }
+            // })),
+            B: this.getBuyOrderBook().map(orders => orders.reduce(qtyReducer)),
+            // B: this.getBuyOrderBook().map(orders => orders.map(order => {
+            //     return { price: order.price, qty: order.qty }
+            // })),
         }
     }
 

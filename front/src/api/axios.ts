@@ -55,5 +55,7 @@ instance.interceptors.response.use(
   }
 );
 
+setAuthorization("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MTI3NTI4MjIsImV4cCI6MTYxMjc1NTIyMn0.bJSjpPmNa4blpvUPdZbgPx6bLa9m7E5kU75EQ2hTEDU");
+
 const cxios = instance;
 export default cxios;

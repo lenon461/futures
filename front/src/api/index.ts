@@ -11,6 +11,11 @@ export default {
       return axios.get("/users/profile")
     }
   },
+  Order: {
+    postOrder(body) {
+      return axios.post("/orders", body)
+    }
+  },
   Summoners: {
     getSummoners() {
       return axios.get("/summoners");

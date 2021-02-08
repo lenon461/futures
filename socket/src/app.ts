@@ -17,10 +17,10 @@ io.on("connect", (socket: Socket) => {
         cb();
     });
     socket.on('subscribe', function(message) { 
-        if(message === 'ticker') {
+        if(message === 'ticker_all') {
             setInterval(() => {
                 const ticker = getTicks()
-                io.emit('ticker', JSON.stringify(ticker))
+                io.emit('ticker_all', JSON.stringify(ticker))
             }, 1000);
         }
         const [event, room] = message?.split('@') || ["??", "??"]
@@ -31,7 +31,8 @@ io.on("connect", (socket: Socket) => {
         }
     })
     
-    socket.on('unsubscribe', function(room) {  
+    socket.on('unsubscribe', function(message) {  
+        const [event, room] = message?.split('@') || ["??", "??"]
         console.log('leaving room', room);
         socket.leave(room); 
     })
