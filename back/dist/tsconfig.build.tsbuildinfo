@@ -1852,7 +1852,7 @@
         "affectsGlobalScope": false
       },
       "../src/orders/orders.controller.ts": {
-        "version": "6e173ba0000c1a605e22d01843ec83be95a21c7dbcf2c55d87b02c196b32b5a9",
+        "version": "7a4f4fa106974f4f173228942133ad3d58ff4f5c3a4e1dead8264cf036f928a3",
         "signature": "f0889608bce8a7b5324e4fd0db10e709cb71e1b50b6df1c9585b3f0e22956b50",
         "affectsGlobalScope": false
       },
@@ -1947,7 +1947,7 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.service.ts": {
-        "version": "cd75f76a901ba161964f115d8ac477061ef8f90bc891b252d8c5e1d42ee6795d",
+        "version": "dbc6c1e4b8e14f9c2dba6d9a4306d951b95f0d97f42a51cc9ea74331b2b16e68",
         "signature": "2f96c47cb8a7034fc9ac6b17d8a7ba8b1dcd538a4a45bd810f38fd6274f3b3f5",
         "affectsGlobalScope": false
       },
@@ -1977,7 +1977,7 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.controller.ts": {
-        "version": "936af3baffa3ed5847ced771bd383c05e20dda80c993368ae63b4af602dc0b8a",
+        "version": "05c5427bc6f524ed6023a195259dec5fbab779c8e8a8321b115d19bf8ee1f690",
         "signature": "56c269ebeece2e959898034ef22915fa39742fb69aa04b5a61e85c92fd901886",
         "affectsGlobalScope": false
       },

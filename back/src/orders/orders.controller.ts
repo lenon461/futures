@@ -32,7 +32,9 @@ export class OrdersController {
 
   @Get()
   async getOrders(@Request() request): Promise<Order[]> {
-    const orders = await this.ordersService.readAll(request.user._id)
+    this.logger.debug("📢 request.user.id")
+    this.logger.debug(request.user)
+    const orders = await this.ordersService.readAll(request.user.id)
     return orders
   }
 

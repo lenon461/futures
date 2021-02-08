@@ -50,7 +50,6 @@ class Trader {
             // 1s 마다 전체 호가 Pub
             // TODO 업데이트된 값만 Pub 하도록 수정
             publisher.publish(`#depth`, JSON.stringify(this.getOrderBooks()))
-            console.log(this.getOrderBooks())
         }, 1000);
     }
 
@@ -112,11 +111,6 @@ class Trader {
                 }
             })
         }
-        this.logger.debug("==========================================")
-        this.logger.debug({
-            S: showOrderBook(this.getSellOrderBook()),
-            B: showOrderBook(this.getBuyOrderBook())
-        })
         return {
             S: showOrderBook(this.getSellOrderBook()),
             B: showOrderBook(this.getBuyOrderBook())

@@ -258,7 +258,9 @@ let OrdersController = OrdersController_1 = class OrdersController {
         return order;
     }
     async getOrders(request) {
-        const orders = await this.ordersService.readAll(request.user._id);
+        this.logger.debug("📢 request.user.id");
+        this.logger.debug(request.user);
+        const orders = await this.ordersService.readAll(request.user.id);
         return orders;
     }
     async cancelOrder(cancelOrderDto) {
@@ -743,11 +745,11 @@ let AuthService = AuthService_1 = class AuthService {
     }
     async validateUser(id, passwd) {
         const user = await this.usersService.findOne(id);
-        this.logger.debug(user);
+        this.logger.debug("validateUser");
         this.logger.debug(user);
         if (user && user.passwd === passwd) {
-            const { _id, id, name, passwd } = user;
-            return { _id, id, name };
+            const { userId, username, passwd } = user;
+            return { userId, username };
         }
         return null;
     }
@@ -934,6 +936,8 @@ let AuthController = AuthController_1 = class AuthController {
         this.logger = new common_1.Logger(AuthController_1.name);
     }
     async login(req) {
+        this.logger.debug("📢 req");
+        console.log((req.user));
         return this.authService.login(req.user);
     }
     getProfile(req) {
