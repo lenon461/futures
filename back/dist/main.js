@@ -71,14 +71,14 @@ AppModule = __decorate([
             bull_1.BullModule.forRoot({
                 redis: {
                     host: 'localhost',
-                    port: 6379,
-                },
+                    port: 6379
+                }
             }),
             orders_module_1.OrdersModule,
             summoners_module_1.SummonersModule,
             auth_module_1.AuthModule,
-            users_module_1.UsersModule,
-        ],
+            users_module_1.UsersModule
+        ]
     })
 ], AppModule);
 exports.AppModule = AppModule;
@@ -144,15 +144,16 @@ const database_module_1 = __webpack_require__(8);
 const orders_controller_1 = __webpack_require__(11);
 const orders_provider_1 = __webpack_require__(17);
 const orders_service_1 = __webpack_require__(12);
+const users_module_1 = __webpack_require__(29);
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
     common_1.Module({
         imports: [
             bull_1.BullModule.registerQueue({
-                name: 'order',
+                name: 'order'
             }),
-            database_module_1.DatabaseModule
+            database_module_1.DatabaseModule, users_module_1.UsersModule
         ],
         controllers: [orders_controller_1.OrdersController],
         providers: [orders_service_1.OrdersService, ...orders_provider_1.ordersProviders]
@@ -187,7 +188,7 @@ let DatabaseModule = class DatabaseModule {
 DatabaseModule = __decorate([
     common_1.Module({
         providers: [...database_providers_1.databaseProviders],
-        exports: [...database_providers_1.databaseProviders],
+        exports: [...database_providers_1.databaseProviders]
     })
 ], DatabaseModule);
 exports.DatabaseModule = DatabaseModule;
@@ -204,8 +205,8 @@ const mongoose = __webpack_require__(10);
 exports.databaseProviders = [
     {
         provide: 'DATABASE_CONNECTION',
-        useFactory: async () => await mongoose.connect('mongodb+srv://seonjl:seonjl@cluster0.gbwnb.mongodb.net/futures'),
-    },
+        useFactory: async () => await mongoose.connect('mongodb+srv://seonjl:seonjl@cluster0.gbwnb.mongodb.net/futures')
+    }
 ];
 
 
@@ -242,7 +243,6 @@ const create_order_dto_1 = __webpack_require__(13);
 const bull_1 = __webpack_require__(7);
 const bull_2 = __webpack_require__(14);
 const jwt_auth_guard_1 = __webpack_require__(15);
-const common_2 = __webpack_require__(4);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
@@ -259,13 +259,13 @@ let OrdersController = OrdersController_1 = class OrdersController {
         return order;
     }
     async getOrders(request, status) {
-        this.logger.debug("📢 getOrders");
+        this.logger.debug('📢 getOrders');
         this.logger.debug(status);
         const orders = await this.ordersService.readAll({ memberId: request.user.id, status });
         return orders;
     }
     async cancelOrder(cancelOrderDto) {
-        this.orderQueue.add(cancelOrderDto.marketId.toString() + "Cancel", cancelOrderDto, { attempts: 5, backoff: 1000 });
+        this.orderQueue.add(cancelOrderDto.marketId.toString() + 'Cancel', cancelOrderDto, { attempts: 5, backoff: 1000 });
         return 'success';
     }
     async deleteOrderAll(memberId) {
@@ -283,7 +283,7 @@ __decorate([
 ], OrdersController.prototype, "postOrder", null);
 __decorate([
     common_1.Get(),
-    __param(0, common_1.Request()), __param(1, common_2.Query('status')),
+    __param(0, common_1.Request()), __param(1, common_1.Query('status')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
@@ -328,21 +328,23 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var OrdersService_1, _a;
+var OrdersService_1, _a, _b;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OrdersService = void 0;
 const common_1 = __webpack_require__(4);
 const mongoose_1 = __webpack_require__(10);
+const users_service_1 = __webpack_require__(27);
 let OrdersService = OrdersService_1 = class OrdersService {
-    constructor(orderModel) {
+    constructor(orderModel, usersService) {
         this.orderModel = orderModel;
+        this.usersService = usersService;
         this.logger = new common_1.Logger(OrdersService_1.name);
     }
     async create(createOrderDto) {
         const defaultOrderProperty = {
             total_qty: createOrderDto.qty,
             time: new Date().getTime(),
-            status: "GO"
+            status: 'GO'
         };
         const createdOrder = new this.orderModel(createOrderDto);
         const order = await createdOrder.save();
@@ -353,7 +355,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
         return order;
     }
     async readAll(params) {
-        this.logger.debug("📢 params");
+        this.logger.debug('📢 params');
         this.logger.debug(params);
         const order = await this.orderModel.find(params).exec();
         return order;
@@ -374,7 +376,7 @@ let OrdersService = OrdersService_1 = class OrdersService {
 OrdersService = OrdersService_1 = __decorate([
     common_1.Injectable(),
     __param(0, common_1.Inject('ORDER_MODEL')),
-    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _a : Object, typeof (_b = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _b : Object])
 ], OrdersService);
 exports.OrdersService = OrdersService;
 
@@ -422,7 +424,7 @@ let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends passport_1.AuthGu
         return super.canActivate(context);
     }
     handleRequest(err, user, info) {
-        this.logger.debug("handleRequest");
+        this.logger.debug('handleRequest');
         this.logger.debug(err);
         this.logger.debug(user);
         this.logger.debug(info);
@@ -456,8 +458,8 @@ exports.ordersProviders = [
     {
         provide: 'ORDER_MODEL',
         useFactory: (mongoose) => mongoose.model('Order', order_schema_1.OrderSchema),
-        inject: ['DATABASE_CONNECTION'],
-    },
+        inject: ['DATABASE_CONNECTION']
+    }
 ];
 
 
@@ -477,7 +479,7 @@ exports.OrderSchema = new mongoose.Schema({
     total_qty: Number,
     type: String,
     status: String,
-    time: Number,
+    time: Number
 });
 
 
@@ -654,8 +656,8 @@ exports.summonersProviders = [
     {
         provide: 'SUMMONER_MODEL',
         useFactory: (mongoose) => mongoose.model('Summoner', summoner_schema_1.SummonerSchema),
-        inject: ['DATABASE_CONNECTION'],
-    },
+        inject: ['DATABASE_CONNECTION']
+    }
 ];
 
 
@@ -674,7 +676,7 @@ exports.SummonerSchema = new mongoose.Schema({
     name: String,
     profileIconId: Number,
     revisionDate: Number,
-    summonerLevel: Number,
+    summonerLevel: Number
 });
 
 
@@ -710,11 +712,11 @@ AuthModule = __decorate([
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
                 secret: constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: '2400s' },
+                signOptions: { expiresIn: '2400s' }
             })
         ],
         providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy, open_api_strategy_1.OpenApiStrategy],
-        controllers: [auth_controller_1.AuthController],
+        controllers: [auth_controller_1.AuthController]
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;
@@ -748,7 +750,7 @@ let AuthService = AuthService_1 = class AuthService {
     }
     async validateUser(id, passwd) {
         const user = await this.usersService.readOne(id);
-        this.logger.debug("validateUser");
+        this.logger.debug('validateUser');
         this.logger.debug(user);
         if (user && user.passwd === passwd) {
             const { _id, id, name, passwd } = user;
@@ -757,11 +759,11 @@ let AuthService = AuthService_1 = class AuthService {
         return null;
     }
     async login(user) {
-        this.logger.debug("login");
+        this.logger.debug('login');
         this.logger.debug(user);
         const payload = { _id: user._id, id: user.id, name: user.name };
         return {
-            access_token: this.jwtService.sign(payload),
+            access_token: this.jwtService.sign(payload)
         };
     }
 };
@@ -800,13 +802,22 @@ let UsersService = UsersService_1 = class UsersService {
         this.logger = new common_1.Logger(UsersService_1.name);
     }
     async readOne(id) {
-        this.logger.debug("readOne");
+        this.logger.debug('readOne');
         return this.userModel.findOne({ id }).exec();
     }
     async create(createUserDto) {
-        const createdUser = new this.userModel(createUserDto);
+        const walletedUser = this.makeWallets(createUserDto);
+        const createdUser = new this.userModel(walletedUser);
         const user = await createdUser.save();
         return user;
+    }
+    makeWallets(createUserDto) {
+        const defaultAssets = { fp: 10000 };
+        createUserDto.assets = defaultAssets;
+        return createUserDto;
+    }
+    async updateWallets(id, marketId) {
+        const user = await this.userModel.findOne({ id }).exec();
     }
 };
 UsersService = UsersService_1 = __decorate([
@@ -848,7 +859,7 @@ UsersModule = __decorate([
         imports: [database_module_1.DatabaseModule],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService, ...users_provider_1.usersProviders],
-        exports: [users_service_1.UsersService],
+        exports: [users_service_1.UsersService]
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;
@@ -923,8 +934,8 @@ exports.usersProviders = [
     {
         provide: 'USER_MODEL',
         useFactory: (mongoose) => mongoose.model('User', user_schema_1.UserSchema),
-        inject: ['DATABASE_CONNECTION'],
-    },
+        inject: ['DATABASE_CONNECTION']
+    }
 ];
 
 
@@ -940,6 +951,7 @@ exports.UserSchema = new mongoose.Schema({
     id: String,
     name: String,
     passwd: String,
+    assets: Object
 });
 
 
@@ -951,7 +963,7 @@ exports.UserSchema = new mongoose.Schema({
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.jwtConstants = void 0;
 exports.jwtConstants = {
-    secret: 'secretKey',
+    secret: 'secretKey'
 };
 
 
@@ -986,16 +998,16 @@ let AuthController = AuthController_1 = class AuthController {
         this.logger = new common_1.Logger(AuthController_1.name);
     }
     async login(req) {
-        this.logger.debug("📢 req");
+        this.logger.debug('📢 req');
         console.log((req.user));
         return this.authService.login(req.user);
     }
     getProfile(req) {
-        this.logger.debug("getProfile");
+        this.logger.debug('getProfile');
         return req.user;
     }
     test(req) {
-        return "success";
+        return 'success';
     }
 };
 __decorate([
@@ -1073,7 +1085,7 @@ let OpenApiAuthGuard = OpenApiAuthGuard_1 = class OpenApiAuthGuard {
     }
     canActivate(context) {
         const request = context.switchToHttp().getRequest();
-        this.logger.debug("canActivate");
+        this.logger.debug('canActivate');
         this.logger.debug(request.headers);
         return true;
     }
@@ -1115,7 +1127,7 @@ let LocalStrategy = LocalStrategy_1 = class LocalStrategy extends passport_1.Pas
         this.logger = new common_1.Logger(LocalStrategy_1.name);
     }
     async validate(id, passwd, done) {
-        this.logger.debug("📢 LocalStartegy");
+        this.logger.debug('📢 LocalStartegy');
         const user = await this.authService.validateUser(id, passwd);
         if (!user) {
             throw new common_1.UnauthorizedException();
@@ -1162,12 +1174,12 @@ let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportS
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: constants_1.jwtConstants.secret,
+            secretOrKey: constants_1.jwtConstants.secret
         });
         this.logger = new common_1.Logger(JwtStrategy_1.name);
     }
     async validate(payload) {
-        this.logger.debug("JwtStrategy validate");
+        this.logger.debug('JwtStrategy validate');
         this.logger.debug(payload);
         return Object.assign({}, payload);
     }
@@ -1208,12 +1220,12 @@ const common_1 = __webpack_require__(4);
 let OpenApiStrategy = OpenApiStrategy_1 = class OpenApiStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy, 'openapi') {
     constructor() {
         super({
-            "test": "test"
+            test: 'test'
         });
         this.logger = new common_1.Logger(OpenApiStrategy_1.name);
     }
     async validate(...args) {
-        this.logger.debug("OpenApiStrategy validate");
+        this.logger.debug('OpenApiStrategy validate');
         this.logger.debug(args);
         return true;
     }

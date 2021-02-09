@@ -1,5 +1,5 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateOrderDto } from './create-order.dto';
+import { PartialType } from '@nestjs/mapped-types'
+import { CreateOrderDto } from './create-order.dto'
 
 export class COrderDto extends PartialType(CreateOrderDto) {
     readonly id: String;

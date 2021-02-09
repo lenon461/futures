@@ -1,49 +1,53 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { Order } from './interfaces/order.interface';
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Model } from 'mongoose'
+import { CreateOrderDto } from './dto/create-order.dto'
+import { Order } from './interfaces/order.interface'
+import { UsersService } from '../users/users.service'
 
 @Injectable()
 export class OrdersService {
-  constructor(
+  constructor (
     @Inject('ORDER_MODEL') private readonly orderModel: Model<Order>,
+    private usersService: UsersService
   ) { }
+
   private readonly logger = new Logger(OrdersService.name);
 
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
+  async create (createOrderDto: CreateOrderDto): Promise<Order> {
     const defaultOrderProperty = {
       total_qty: createOrderDto.qty,
       time: new Date().getTime(),
-      status: "GO"
+      status: 'GO'
     }
-    const createdOrder = new this.orderModel(createOrderDto);
-    const order = await createdOrder.save();
+    const createdOrder = new this.orderModel(createOrderDto)
+    const order = await createdOrder.save()
     return order
   }
-  async readOne(id: string) {
-    const order =  await this.orderModel.find({id}).exec();
+
+  async readOne (id: string) {
+    const order = await this.orderModel.find({ id }).exec()
     return order
   }
-  
-  async readAll(params) {
-    this.logger.debug("📢 params")
+
+  async readAll (params) {
+    this.logger.debug('📢 params')
     this.logger.debug(params)
-    const order =  await this.orderModel.find(params).exec();
+    const order = await this.orderModel.find(params).exec()
     return order
   }
 
-  async cancelOne(_id: string) {
-    const result =  await this.orderModel.updateOne({_id}, {status: 'CC'}).exec();
-    return result;
-  }
-
-  async deleteAll(memberId) {
-    const result = await this.orderModel.deleteMany({memberId})
+  async cancelOne (_id: string) {
+    const result = await this.orderModel.updateOne({ _id }, { status: 'CC' }).exec()
     return result
   }
 
-  async deleteOne(id) {
-    const result = await this.orderModel.deleteMany({id})
+  async deleteAll (memberId) {
+    const result = await this.orderModel.deleteMany({ memberId })
+    return result
+  }
+
+  async deleteOne (id) {
+    const result = await this.orderModel.deleteMany({ id })
     return result
   }
 }

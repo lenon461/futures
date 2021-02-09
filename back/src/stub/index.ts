@@ -4,4 +4,4 @@ const Stub = {
   lp
 }
 
-export default Stub;
+export default Stub

@@ -1,20 +1,21 @@
-import { Strategy } from 'passport-local';
-import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { Strategy } from 'passport-local'
+import { PassportStrategy } from '@nestjs/passport'
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common'
+import { AuthService } from '../auth.service'
 
 @Injectable()
 export class OpenApiStrategy extends PassportStrategy(Strategy, 'openapi') {
-  constructor() {
+  constructor () {
     super({
-      "test":"test"
+      test: 'test'
     })
   }
+
   private readonly logger = new Logger(OpenApiStrategy.name);
 
-  async validate(...args): Promise<any> {
-    this.logger.debug("OpenApiStrategy validate")
+  async validate (...args): Promise<any> {
+    this.logger.debug('OpenApiStrategy validate')
     this.logger.debug(args)
-    return true;
+    return true
   }
 }

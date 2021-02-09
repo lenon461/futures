@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document } from 'mongoose'
 export interface Order extends Document {
     readonly memberId: String;
     readonly marketId: String;
