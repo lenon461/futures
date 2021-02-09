@@ -7,6 +7,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { request } from 'express';
+import { Query } from '@nestjs/common';
 
 @UseGuards(JwtAuthGuard)
 @Controller('orders')
@@ -31,10 +32,11 @@ export class OrdersController {
   }
 
   @Get()
-  async getOrders(@Request() request): Promise<Order[]> {
-    this.logger.debug("📢 request.user.id")
-    this.logger.debug(request.user)
-    const orders = await this.ordersService.readAll(request.user.id)
+  async getOrders(@Request() request, @Query('status') status): Promise<Order[]> {
+    this.logger.debug("📢 getOrders")
+    this.logger.debug(status)
+    const orders = await this.ordersService.readAll({memberId: request.user.id, status})
+   
     return orders
   }
 

@@ -242,6 +242,7 @@ const create_order_dto_1 = __webpack_require__(13);
 const bull_1 = __webpack_require__(7);
 const bull_2 = __webpack_require__(14);
 const jwt_auth_guard_1 = __webpack_require__(15);
+const common_2 = __webpack_require__(4);
 let OrdersController = OrdersController_1 = class OrdersController {
     constructor(ordersService, orderQueue) {
         this.ordersService = ordersService;
@@ -257,10 +258,10 @@ let OrdersController = OrdersController_1 = class OrdersController {
         this.orderQueue.add(createOrderDto.marketId.toString(), order, { attempts: 5, backoff: 1000 });
         return order;
     }
-    async getOrders(request) {
-        this.logger.debug("📢 request.user.id");
-        this.logger.debug(request.user);
-        const orders = await this.ordersService.readAll(request.user.id);
+    async getOrders(request, status) {
+        this.logger.debug("📢 getOrders");
+        this.logger.debug(status);
+        const orders = await this.ordersService.readAll({ memberId: request.user.id, status });
         return orders;
     }
     async cancelOrder(cancelOrderDto) {
@@ -282,9 +283,9 @@ __decorate([
 ], OrdersController.prototype, "postOrder", null);
 __decorate([
     common_1.Get(),
-    __param(0, common_1.Request()),
+    __param(0, common_1.Request()), __param(1, common_2.Query('status')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], OrdersController.prototype, "getOrders", null);
 __decorate([
@@ -351,8 +352,10 @@ let OrdersService = OrdersService_1 = class OrdersService {
         const order = await this.orderModel.find({ id }).exec();
         return order;
     }
-    async readAll(_id) {
-        const order = await this.orderModel.find({ _id }).exec();
+    async readAll(params) {
+        this.logger.debug("📢 params");
+        this.logger.debug(params);
+        const order = await this.orderModel.find(params).exec();
         return order;
     }
     async cancelOne(_id) {
@@ -693,11 +696,11 @@ const auth_service_1 = __webpack_require__(26);
 const users_module_1 = __webpack_require__(29);
 const passport_1 = __webpack_require__(16);
 const jwt_1 = __webpack_require__(28);
-const constants_1 = __webpack_require__(31);
-const auth_controller_1 = __webpack_require__(32);
-const local_strategy_1 = __webpack_require__(35);
-const jwt_strategy_1 = __webpack_require__(37);
-const open_api_strategy_1 = __webpack_require__(39);
+const constants_1 = __webpack_require__(33);
+const auth_controller_1 = __webpack_require__(34);
+const local_strategy_1 = __webpack_require__(37);
+const jwt_strategy_1 = __webpack_require__(39);
+const open_api_strategy_1 = __webpack_require__(41);
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
@@ -744,19 +747,19 @@ let AuthService = AuthService_1 = class AuthService {
         this.logger = new common_1.Logger(AuthService_1.name);
     }
     async validateUser(id, passwd) {
-        const user = await this.usersService.findOne(id);
+        const user = await this.usersService.readOne(id);
         this.logger.debug("validateUser");
         this.logger.debug(user);
         if (user && user.passwd === passwd) {
-            const { userId, username, passwd } = user;
-            return { userId, username };
+            const { _id, id, name, passwd } = user;
+            return { _id, id, name };
         }
         return null;
     }
     async login(user) {
         this.logger.debug("login");
         this.logger.debug(user);
-        const payload = { username: user.username, sub: user.userId };
+        const payload = { _id: user._id, id: user.id, name: user.name };
         return {
             access_token: this.jwtService.sign(payload),
         };
@@ -780,33 +783,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var UsersService_1;
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var UsersService_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersService = void 0;
 const common_1 = __webpack_require__(4);
+const mongoose_1 = __webpack_require__(10);
 let UsersService = UsersService_1 = class UsersService {
-    constructor() {
+    constructor(userModel) {
+        this.userModel = userModel;
         this.logger = new common_1.Logger(UsersService_1.name);
-        this.users = [
-            {
-                userId: 1,
-                username: 'jslee',
-                passwd: '1234',
-            },
-            {
-                userId: 2,
-                username: 'maria',
-                passwd: 'guess',
-            },
-        ];
     }
-    async findOne(username) {
-        this.logger.debug("findOne");
-        return this.users.find(user => user.username === username);
+    async readOne(id) {
+        this.logger.debug("readOne");
+        return this.userModel.findOne({ id }).exec();
+    }
+    async create(createUserDto) {
+        const createdUser = new this.userModel(createUserDto);
+        const user = await createdUser.save();
+        return user;
     }
 };
 UsersService = UsersService_1 = __decorate([
-    common_1.Injectable()
+    common_1.Injectable(),
+    __param(0, common_1.Inject('USER_MODEL')),
+    __metadata("design:paramtypes", [typeof (_a = typeof mongoose_1.Model !== "undefined" && mongoose_1.Model) === "function" ? _a : Object])
 ], UsersService);
 exports.UsersService = UsersService;
 
@@ -833,13 +839,16 @@ exports.UsersModule = void 0;
 const common_1 = __webpack_require__(4);
 const users_service_1 = __webpack_require__(27);
 const users_controller_1 = __webpack_require__(30);
+const database_module_1 = __webpack_require__(8);
+const users_provider_1 = __webpack_require__(31);
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     common_1.Module({
-        providers: [users_service_1.UsersService],
+        imports: [database_module_1.DatabaseModule],
+        controllers: [users_controller_1.UsersController],
+        providers: [users_service_1.UsersService, ...users_provider_1.usersProviders],
         exports: [users_service_1.UsersService],
-        controllers: [users_controller_1.UsersController]
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;
@@ -874,8 +883,10 @@ let UsersController = UsersController_1 = class UsersController {
         this.logger = new common_1.Logger(UsersController_1.name);
     }
     getProfile(req) {
-        this.logger.debug("getProfile");
-        return req.user;
+        return this.usersService.readOne(req.user.id);
+    }
+    async signUp(CreateUserDto) {
+        return this.usersService.create(CreateUserDto);
     }
 };
 __decorate([
@@ -886,6 +897,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getProfile", null);
+__decorate([
+    common_1.Post(''),
+    __param(0, common_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "signUp", null);
 UsersController = UsersController_1 = __decorate([
     common_1.Controller('users'),
     __metadata("design:paramtypes", [typeof (_a = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _a : Object])
@@ -895,6 +913,38 @@ exports.UsersController = UsersController;
 
 /***/ }),
 /* 31 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.usersProviders = void 0;
+const user_schema_1 = __webpack_require__(32);
+exports.usersProviders = [
+    {
+        provide: 'USER_MODEL',
+        useFactory: (mongoose) => mongoose.model('User', user_schema_1.UserSchema),
+        inject: ['DATABASE_CONNECTION'],
+    },
+];
+
+
+/***/ }),
+/* 32 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.UserSchema = void 0;
+const mongoose = __webpack_require__(10);
+exports.UserSchema = new mongoose.Schema({
+    id: String,
+    name: String,
+    passwd: String,
+});
+
+
+/***/ }),
+/* 33 */
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -906,7 +956,7 @@ exports.jwtConstants = {
 
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -927,9 +977,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthController = void 0;
 const common_1 = __webpack_require__(4);
 const auth_service_1 = __webpack_require__(26);
-const local_auth_guard_1 = __webpack_require__(33);
+const local_auth_guard_1 = __webpack_require__(35);
 const jwt_auth_guard_1 = __webpack_require__(15);
-const open_api_auth_guard_1 = __webpack_require__(34);
+const open_api_auth_guard_1 = __webpack_require__(36);
 let AuthController = AuthController_1 = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -980,7 +1030,7 @@ exports.AuthController = AuthController;
 
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1003,7 +1053,7 @@ exports.LocalAuthGuard = LocalAuthGuard;
 
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1035,7 +1085,7 @@ exports.OpenApiAuthGuard = OpenApiAuthGuard;
 
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1051,7 +1101,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var LocalStrategy_1, _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.LocalStrategy = void 0;
-const passport_local_1 = __webpack_require__(36);
+const passport_local_1 = __webpack_require__(38);
 const passport_1 = __webpack_require__(16);
 const common_1 = __webpack_require__(4);
 const auth_service_1 = __webpack_require__(26);
@@ -1081,13 +1131,13 @@ exports.LocalStrategy = LocalStrategy;
 
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ ((module) => {
 
 module.exports = require("passport-local");;
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1103,10 +1153,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var JwtStrategy_1;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.JwtStrategy = void 0;
-const passport_jwt_1 = __webpack_require__(38);
+const passport_jwt_1 = __webpack_require__(40);
 const passport_1 = __webpack_require__(16);
 const common_1 = __webpack_require__(4);
-const constants_1 = __webpack_require__(31);
+const constants_1 = __webpack_require__(33);
 let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends passport_1.PassportStrategy(passport_jwt_1.Strategy) {
     constructor() {
         super({
@@ -1130,13 +1180,13 @@ exports.JwtStrategy = JwtStrategy;
 
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ ((module) => {
 
 module.exports = require("passport-jwt");;
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
@@ -1152,7 +1202,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var OpenApiStrategy_1;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.OpenApiStrategy = void 0;
-const passport_local_1 = __webpack_require__(36);
+const passport_local_1 = __webpack_require__(38);
 const passport_1 = __webpack_require__(16);
 const common_1 = __webpack_require__(4);
 let OpenApiStrategy = OpenApiStrategy_1 = class OpenApiStrategy extends passport_1.PassportStrategy(passport_local_1.Strategy, 'openapi') {

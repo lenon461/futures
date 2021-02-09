@@ -11,12 +11,12 @@ export class AuthService {
     private readonly logger = new Logger(AuthService.name);
 
   async validateUser(id: string, passwd: string): Promise<any> {
-    const user = await this.usersService.findOne(id);
+    const user = await this.usersService.readOne(id);
     this.logger.debug("validateUser")
     this.logger.debug(user)
     if (user && user.passwd === passwd) {
-      const { userId, username, passwd } = user;
-      return {userId, username};
+      const { _id, id, name, passwd } = user;
+      return { _id, id, name};
     }
     return null;
   }
@@ -24,7 +24,7 @@ export class AuthService {
   async login(user: any) {
     this.logger.debug("login")
     this.logger.debug(user)
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { _id: user._id, id: user.id, name: user.name };
     return {
       access_token: this.jwtService.sign(payload),
     };

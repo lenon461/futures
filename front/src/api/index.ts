@@ -9,11 +9,20 @@ export default {
   User: {
     getProfile() {
       return axios.get("/users/profile")
-    }
+    },
   },
   Order: {
     postOrder(body) {
       return axios.post("/orders", body)
+    },
+    getOrderAll() {
+      return axios.get("/orders");
+    },
+    getOrderGO() {
+      return axios.get("/orders?status=GO");
+    },
+    getOrderCM() {
+      return axios.get("/orders?status=CM");
     }
   },
   Summoners: {

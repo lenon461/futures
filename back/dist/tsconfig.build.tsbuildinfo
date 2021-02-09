@@ -1787,8 +1787,8 @@
         "affectsGlobalScope": false
       },
       "../src/orders/orders.service.ts": {
-        "version": "5e60884b4570270db65d4fb68de2267a6f100ce495ea0ad2f4aa73605c8dcb7d",
-        "signature": "f77ed3119fe3d5e4c85721d36f159092ab90dfa250db7a1f1e4b410225bb9671",
+        "version": "481ca565279f382cabb7d58750d36b3ffe7054977b9e2fa74a088c29e4c02ea1",
+        "signature": "4e31a10518dc1d2b54eb888f746f455fa0ef0f15c3a6b9556d521134fc033cc1",
         "affectsGlobalScope": false
       },
       "../node_modules/@nestjs/passport/dist/abstract.strategy.d.ts": {
@@ -1852,8 +1852,8 @@
         "affectsGlobalScope": false
       },
       "../src/orders/orders.controller.ts": {
-        "version": "7a4f4fa106974f4f173228942133ad3d58ff4f5c3a4e1dead8264cf036f928a3",
-        "signature": "f0889608bce8a7b5324e4fd0db10e709cb71e1b50b6df1c9585b3f0e22956b50",
+        "version": "38e7a6e54862a6937bd4c9a774702b87268ec583819a566f4b7eefd66cb877ff",
+        "signature": "20523015a4a6d829485a4a4f38839a41ef1f2d3634e112c6c08b522d1bec7a36",
         "affectsGlobalScope": false
       },
       "../src/orders/schemas/order.schema.ts": {
@@ -1906,9 +1906,14 @@
         "signature": "62dff25510c4c74dc73d9f8214c31334dfe004ebdb43aeb23df4cff4ca108ba4",
         "affectsGlobalScope": false
       },
+      "../src/users/interfaces/user.interface.ts": {
+        "version": "70c40176b52b8298d83c5d562036d2ccde1d2453b1b5b84592403649b2c9152b",
+        "signature": "4f42108e37dc398ac8ac6bcc0b7be3ae0d0c1a1327ea211f1b887b9c2fce8e16",
+        "affectsGlobalScope": false
+      },
       "../src/users/users.service.ts": {
-        "version": "1df06332970733140b0e23661cea1bd3445615d04932b8959b75962dc8eba5d4",
-        "signature": "77e0ce5f1ede6d0a9706f349f8cc0ecff144f36c3a68ce29ce27e91c643d2d31",
+        "version": "7e5ae0f4e00ee166ffc2764481a600ca53a7bd9f8d1952527318cc374839b721",
+        "signature": "7d30189880b419ba8fe79dd5a98c01cd4316914321db2dd2dfb71f4400e4aee9",
         "affectsGlobalScope": false
       },
       "../node_modules/@types/jsonwebtoken/index.d.ts": {
@@ -1947,17 +1952,32 @@
         "affectsGlobalScope": false
       },
       "../src/auth/auth.service.ts": {
-        "version": "dbc6c1e4b8e14f9c2dba6d9a4306d951b95f0d97f42a51cc9ea74331b2b16e68",
+        "version": "12baff8b02e0f2b02610d177a0cc2833c575564272d31845811815a709752dc3",
         "signature": "2f96c47cb8a7034fc9ac6b17d8a7ba8b1dcd538a4a45bd810f38fd6274f3b3f5",
         "affectsGlobalScope": false
       },
+      "../src/users/dto/create-user.dto.ts": {
+        "version": "3351698c1c34ff4f964eb4d5809333828533754cdddb9b552415427121d911d4",
+        "signature": "6228c03a6f6af35877ea3e2d1fd8407b6e04a333bccec0c98a47ccd054b16501",
+        "affectsGlobalScope": false
+      },
       "../src/users/users.controller.ts": {
-        "version": "5b181449567e193dd8c729910f0e273efbdb1d6c2efcc7e17e7de6c279adf2a2",
-        "signature": "f3a0b7839ca1996d4e8478be08a2c1da446b98834d85ea7415d590dc4d8bc7e4",
+        "version": "38d83c46cb9640b644ba0e99ea321c01f2df35aae7fd98e3593ae61bacfc91ce",
+        "signature": "18a7dfa6f9a275db0b06740fed512191477c7fa705b7f68f354cbfcac6492752",
+        "affectsGlobalScope": false
+      },
+      "../src/users/schemas/user.schema.ts": {
+        "version": "443be18badc0d4c372668d87888e099d6bb2376155a469ae38e1c550ff64d0ae",
+        "signature": "33b6d9f5900752b91a05e8ec298b94fec72ab453cbb20021183b577561396086",
+        "affectsGlobalScope": false
+      },
+      "../src/users/users.provider.ts": {
+        "version": "f5645f33948ce9acfa24d6379e3b521cd7d3b4eb678bbb7e28bcfde1197b95b7",
+        "signature": "293db790fe55240ee55e27ed9f3751624810c3c07840c9ea2e93cb0f88a61e5b",
         "affectsGlobalScope": false
       },
       "../src/users/users.module.ts": {
-        "version": "a63d0bc66c4ddda2c63e88cb7e98513d43735987f4f0fc0d790e54657921c901",
+        "version": "b960998e496cbc22866cf2283489c2d72710b1e2c715c8251e3eb138fcbc254a",
         "signature": "12dec6c99bd8d11167fa91a31e737abbbf8c9cc789c151a25a9a1d13f328175c",
         "affectsGlobalScope": false
       },
@@ -4610,18 +4630,33 @@
         "../src/summoners/dto/create-summoner.dto.ts",
         "../src/summoners/interfaces/summoner.interface.ts"
       ],
+      "../src/users/interfaces/user.interface.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
+      ],
+      "../src/users/schemas/user.schema.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
+      ],
       "../src/users/users.controller.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
         "../src/auth/guards/jwt-auth.guard.ts",
+        "../src/users/dto/create-user.dto.ts",
         "../src/users/users.service.ts"
       ],
       "../src/users/users.module.ts": [
         "../node_modules/@nestjs/common/index.d.ts",
+        "../src/database/database.module.ts",
         "../src/users/users.controller.ts",
+        "../src/users/users.provider.ts",
         "../src/users/users.service.ts"
       ],
+      "../src/users/users.provider.ts": [
+        "../node_modules/@types/mongoose/index.d.ts",
+        "../src/users/schemas/user.schema.ts"
+      ],
       "../src/users/users.service.ts": [
-        "../node_modules/@nestjs/common/index.d.ts"
+        "../node_modules/@nestjs/common/index.d.ts",
+        "../node_modules/@types/mongoose/index.d.ts",
+        "../src/users/interfaces/user.interface.ts"
       ],
       "../src/util/logger.ts": [
         "../node_modules/@types/node/fs.d.ts"
@@ -6501,8 +6536,21 @@
         "../src/summoners/dto/create-summoner.dto.ts",
         "../src/summoners/interfaces/summoner.interface.ts"
       ],
+      "../src/users/interfaces/user.interface.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
+      ],
+      "../src/users/schemas/user.schema.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
+      ],
       "../src/users/users.controller.ts": [
+        "../src/users/interfaces/user.interface.ts",
         "../src/users/users.service.ts"
+      ],
+      "../src/users/users.provider.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
+      ],
+      "../src/users/users.service.ts": [
+        "../node_modules/@types/mongoose/index.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -7031,8 +7079,12 @@
       "../src/summoners/summoners.module.ts",
       "../src/summoners/summoners.provider.ts",
       "../src/summoners/summoners.service.ts",
+      "../src/users/dto/create-user.dto.ts",
+      "../src/users/interfaces/user.interface.ts",
+      "../src/users/schemas/user.schema.ts",
       "../src/users/users.controller.ts",
       "../src/users/users.module.ts",
+      "../src/users/users.provider.ts",
       "../src/users/users.service.ts",
       "../src/util/logger.ts"
     ],
@@ -7051,6 +7103,10 @@
       ],
       [
         "../src/auth/auth.service.ts",
+        0
+      ],
+      [
+        "../src/auth/guards/local-auth.guard.ts",
         0
       ],
       [

@@ -25,8 +25,10 @@ export class OrdersService {
     return order
   }
   
-  async readAll(_id) {
-    const order =  await this.orderModel.find({_id}).exec();
+  async readAll(params) {
+    this.logger.debug("📢 params")
+    this.logger.debug(params)
+    const order =  await this.orderModel.find(params).exec();
     return order
   }
 

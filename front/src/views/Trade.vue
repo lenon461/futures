@@ -62,7 +62,9 @@
           <p>{{ "3838" }} {{ "USDT" }}</p>
         </div>
         <div class="order-button mt10">
-          <b-button class="orderBtn btn-block" @click="sendCall">{{ "XRP 매수" }}</b-button>
+          <b-button class="orderBtn btn-block" @click="sendCall">{{
+            "XRP 매수"
+          }}</b-button>
         </div>
         <!-- <b-card no-body>
           <b-tabs pills card>
@@ -113,8 +115,7 @@
         <b-list-group>
           <div class="ORDER" v-for="(item, index) in S" :key="item + index">
             <b-list-group-item button>
-              {{ item.price }} 원|
-              {{ item.qty }} 개
+              {{ item.price }} 원| {{ item.qty }} 개
             </b-list-group-item>
           </div>
         </b-list-group>
@@ -122,8 +123,7 @@
         <b-list-group>
           <div class="ORDER" v-for="(item, index) in B" :key="item + index">
             <b-list-group-item button>
-              {{ item.price }} 원|
-              {{ item.qty }} 개
+              {{ item.price }} 원| {{ item.qty }} 개
             </b-list-group-item>
           </div>
         </b-list-group>
@@ -146,24 +146,23 @@ import socket from "../api/socket";
     OrderBox,
     OrderBook
   },
-  
+
   beforeRouteEnter(to, from, next) {
     const marketId = to.params.marketId;
     socket.emit("subscribe", `depth@${marketId}`);
-    next()
+    next();
   },
 
   beforeRouteUpdate(to, from, next) {
-    console.log('beforeRouteUpdate')
-    next()
+    console.log("beforeRouteUpdate");
+    next();
   },
 
   beforeRouteLeave(to, from, next) {
     const marketId = from.params.marketId;
     socket.emit("unsubscribe", `depth@${marketId}`);
-    next()
+    next();
   }
-
 })
 export default class Trade extends Vue {
   public name = "marketId";
@@ -182,6 +181,9 @@ export default class Trade extends Vue {
     { value: "a", text: "This is First option" },
     { value: "b", text: "Selected Option" }
   ];
+  public confirmedOrders = [];
+  public unfilledOrders = [];
+
   get totalPrice() {
     return this.qty * this.price;
   }
@@ -194,25 +196,26 @@ export default class Trade extends Vue {
       price: this.price,
       qty: this.qty,
       type: this.type,
-      status: 'GO',
-    }
+      status: "GO"
+    };
   }
   setDepth(data) {
     const { name, S, B } = JSON.parse(data);
-    this.name = name; 
+    this.name = name;
     this.S = S;
     this.B = B.reverse();
   }
   created() {
     socket.on("depth", this.setDepth);
   }
+  async mounted() {
+    this.unfilledOrders = (await Api.Order.getOrderGO()).data;
+    this.confirmedOrders = (await Api.Order.getOrderCM()).data;
+    
+  }
   async sendCall() {
     const res = await Api.Order.postOrder(this.call);
-    console.log(res.status)
-  }
-  beforeDestroy() {
-    console.log('beforeDestroy')
-    console.log(this.marketId)
+    console.log(res.status);
   }
 }
 </script>
