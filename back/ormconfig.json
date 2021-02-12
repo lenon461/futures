@@ -1,0 +1,7 @@
+{
+  "type": "mongodb",
+  "url": "mongodb+srv://seonjl:seonjl@cluster0.gbwnb.mongodb.net/futures",
+  "entities": ["src/**/*.entity{.ts,.js}"],
+  "synchronize": true,
+  "autoLoadEntities": true
+}

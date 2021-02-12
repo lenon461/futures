@@ -1,49 +1,25 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { Order } from './interfaces/order.interface';
-
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { CreateOrderDto, Order } from './orders.entity'
+import { OrderRepository } from './orders.repository'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 @Injectable()
 export class OrdersService {
-  constructor(
-    @Inject('ORDER_MODEL') private readonly orderModel: Model<Order>,
+  constructor (
+
+    @InjectRepository(OrderRepository)
+    private readonly orderRepository: OrderRepository
   ) { }
-  private readonly logger = new Logger(OrdersService.name);
 
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
-    const defaultOrderProperty = {
-      total_qty: createOrderDto.qty,
-      time: new Date().getTime(),
-      status: "GO"
+    private readonly logger = new Logger(OrdersService.name);
+
+    async save (orderIn: CreateOrderDto): Promise<Order> {
+      const order = await this.orderRepository.createOrder(orderIn)
+      return order
     }
-    const createdOrder = new this.orderModel(createOrderDto);
-    const order = await createdOrder.save();
-    return order
-  }
-  async readOne(id: string) {
-    const order =  await this.orderModel.find({id}).exec();
-    return order
-  }
-  
-  async readAll(params) {
-    this.logger.debug("📢 params")
-    this.logger.debug(params)
-    const order =  await this.orderModel.find(params).exec();
-    return order
-  }
 
-  async cancelOne(_id: string) {
-    const result =  await this.orderModel.updateOne({_id}, {status: 'CC'}).exec();
-    return result;
-  }
-
-  async deleteAll(memberId) {
-    const result = await this.orderModel.deleteMany({memberId})
-    return result
-  }
-
-  async deleteOne(id) {
-    const result = await this.orderModel.deleteMany({id})
-    return result
-  }
+    async findAll (params) {
+      const order = await this.orderRepository.read(params)
+      return order
+    }
 }

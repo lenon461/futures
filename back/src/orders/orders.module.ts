@@ -1,17 +1,20 @@
-import { BullModule } from '@nestjs/bull';
-import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../database/database.module';
-import { OrdersController } from './orders.controller';
-import { ordersProviders } from './orders.provider';
-import { OrdersService } from './orders.service';
+import { BullModule } from '@nestjs/bull'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { Module } from '@nestjs/common'
+import { OrdersController } from './orders.controller'
+import { Order } from './orders.entity'
+import { OrdersService } from './orders.service'
+import { OrderRepositoryProvider, OrderRepository } from './orders.repository'
 
 @Module({
   imports: [
     BullModule.registerQueue({
-      name: 'order',
+      name: 'order'
     }),
-    DatabaseModule],
+    TypeOrmModule.forFeature([OrderRepository])],
+
   controllers: [OrdersController],
-  providers: [OrdersService,  ...ordersProviders]
+  providers: [OrdersService, OrderRepositoryProvider]
+
 })
 export class OrdersModule { }

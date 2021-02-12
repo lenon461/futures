@@ -1,24 +1,30 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { CreateSummonerDto } from './dto/create-summoner.dto';
-import { Summoner } from './interfaces/summoner.interface';
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { CreateSummonerDto, Summoner } from './summoners.entity'
+import { SummonerRepository } from './summoners.repository'
+import { InjectRepository } from '@nestjs/typeorm'
 
 @Injectable()
 export class SummonersService {
-    constructor(@Inject('SUMMONER_MODEL') private readonly summonerModel: Model<Summoner>) { }
+  constructor (
+
+    @InjectRepository(SummonerRepository)
+    private readonly SummonerRepository: SummonerRepository
+  ) { }
+
     private readonly logger = new Logger(SummonersService.name);
 
-    async create(createSummonerDto: CreateSummonerDto): Promise<Summoner> {
-        const createdSummoner = new this.summonerModel(createSummonerDto);
-        const summoner = await createdSummoner.save();
-        return summoner;
+    async save (summonrIn: CreateSummonerDto): Promise<Summoner> {
+      const summoner = await this.SummonerRepository.createSummoner(summonrIn)
+      return summoner
     }
 
-    async readOne(name: string): Promise<Summoner> {
-        return this.summonerModel.findOne({ name })
+    async findAll (params): Promise<Summoner[]> {
+      return this.SummonerRepository.read(params)
     }
 
-    async readAll(): Promise<Summoner[]> {
-        return this.summonerModel.find({}).exec();
+    async getAllSIDXs () {
+      const summoners = await this.SummonerRepository.read({})
+      return summoners.map(ele => ele.SIDX)
+
     }
 }

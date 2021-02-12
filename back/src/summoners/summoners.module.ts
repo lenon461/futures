@@ -1,12 +1,15 @@
-import { Module } from '@nestjs/common';
-import { SummonersController } from './summoners.controller';
-import { summonersProviders } from './summoners.provider';
-import { SummonersService } from './summoners.service';
-import { DatabaseModule } from '../database/database.module';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { SummonersController } from './summoners.controller'
+import { SummonersService } from './summoners.service'
+import { DatabaseModule } from '../database/database.module'
+import { SummonerRepositoryProvider, SummonerRepository } from './summoners.repository'
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule,
+    TypeOrmModule.forFeature([SummonerRepository])],
   controllers: [SummonersController],
-  providers: [SummonersService, ...summonersProviders]
+  providers: [SummonersService, SummonerRepositoryProvider],
+  exports: [SummonersService]
 })
 export class SummonersModule { }

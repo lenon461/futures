@@ -12,6 +12,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
+    "lib": [
+      "ES2020",
+    ]
     // "paths": {
     //   "@app/test": [
     //     "libs/test/src"
